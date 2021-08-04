@@ -29,6 +29,9 @@ class Events(commands.Cog, description='Events. These are all the events that ha
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
+        if message.author.id == self.bot.user.id:
+            return
+
         data = await self.bot.log_channels.find(message.guild.id)
 
         if not data or "channel" not in data:
@@ -39,7 +42,7 @@ class Events(commands.Cog, description='Events. These are all the events that ha
 
         embed = discord.Embed(
             title = 'Message Deleted',
-            description = f'This task was completed without any errors.',
+            description = 'This task was completed without any errors.',
             colour = self.bot.logging_color
         )
         embed.timestamp = datetime.datetime.utcnow()
@@ -55,7 +58,7 @@ class Events(commands.Cog, description='Events. These are all the events that ha
     async def on_ready(self):
         print('------')
         current_guilds = len(self.bot.guilds)
-        await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(f'p.help | Serving {current_guilds} guilds.'))
+        await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(f'{self.bot.prefix}help | Serving {current_guilds} guilds.'))
         print(f'Logged in as: {self.bot.user.name}')
         print('Succesful connection to MongoDB.')
         self.bot.reddit_task = asyncpraw.Reddit(
@@ -70,7 +73,7 @@ class Events(commands.Cog, description='Events. These are all the events that ha
     async def on_command_error(self, ctx, error):
         embed = discord.Embed(
             title = 'Error Found',
-            description = f'This task has come accross an error.',
+            description = 'This task has come accross an error.',
             colour = self.bot.error_color
         )
         embed.timestamp = datetime.datetime.utcnow()
@@ -82,6 +85,9 @@ class Events(commands.Cog, description='Events. These are all the events that ha
 
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):
+        if after.author.id == self.bot.user.id:
+            return
+
         data = await self.bot.log_channels.find(before.guild.id)
 
         if not data or "channel" not in data:
@@ -92,7 +98,7 @@ class Events(commands.Cog, description='Events. These are all the events that ha
 
         embed = discord.Embed(
             title = 'Message Edited',
-            description = f'This task was completed without any errors.',
+            description = 'This task was completed without any errors.',
             colour = self.bot.logging_color
         )
         embed.timestamp = datetime.datetime.utcnow()
@@ -117,12 +123,12 @@ class Events(commands.Cog, description='Events. These are all the events that ha
 
         embed = discord.Embed(
             title = 'Role Created',
-            description = f'This task was completed without any errors.',
+            description = 'This task was completed without any errors.',
             colour = self.bot.logging_color
         )
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_author(name=f'{role}', icon_url=f'{self.bot.user.avatar_url}')
-        embed.set_footer(text=f'Event logging.')
+        embed.set_footer(text='Event logging.')
         embed.set_thumbnail(url=f'{channel.guild.icon_url}')
         embed.add_field(name=f'Role', value=f'{role.name}', inline=True)
         embed.add_field(name=f'ID', value=f'{role.id}', inline=True)
@@ -141,7 +147,7 @@ class Events(commands.Cog, description='Events. These are all the events that ha
 
         embed = discord.Embed(
             title = 'Role Deleted',
-            description = f'This task was completed without any errors.',
+            description = 'This task was completed without any errors.',
             colour = self.bot.logging_color
         )
         embed.timestamp = datetime.datetime.utcnow()
@@ -165,12 +171,12 @@ class Events(commands.Cog, description='Events. These are all the events that ha
 
         embed = discord.Embed(
             title = 'Role Updated',
-            description = f'This task was completed without any errors.',
+            description = 'This task was completed without any errors.',
             colour = self.bot.logging_color
         )
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_author(name=f'{after}', icon_url=f'{self.bot.user.avatar_url}')
-        embed.set_footer(text=f'Event logging.')
+        embed.set_footer(text='Event logging.')
         embed.set_thumbnail(url=f'{channel.guild.icon_url}')
         embed.add_field(name=f'Before', value=f'{before.mention}', inline=True)
         embed.add_field(name=f'After', value=f'{after.mention}', inline=True)
@@ -190,12 +196,12 @@ class Events(commands.Cog, description='Events. These are all the events that ha
 
         embed = discord.Embed(
             title = 'User Banned',
-            description = f'This task was completed without any errors.',
+            description = 'This task was completed without any errors.',
             colour = self.bot.logging_color
         )
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_author(name=f'{user}', icon_url=f'{user.avatar_url}')
-        embed.set_footer(text=f'Event logging.')
+        embed.set_footer(text='Event logging.')
         embed.set_thumbnail(url=f'{guild.icon_url}')
         embed.add_field(name=f'User', value=f'{user.mention}', inline=True)
         embed.add_field(name=f'ID', value=f'{user.id}', inline=True)
@@ -214,12 +220,12 @@ class Events(commands.Cog, description='Events. These are all the events that ha
 
         embed = discord.Embed(
             title = 'User Unbanned',
-            description = f'This task was completed without any errors.',
+            description = 'This task was completed without any errors.',
             colour = self.bot.logging_color
         )
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_author(name=f'{user}', icon_url=f'{user.avatar_url}')
-        embed.set_footer(text=f'Event logging.')
+        embed.set_footer(text='Event logging.')
         embed.set_thumbnail(url=f'{guild.icon_url}')
         embed.add_field(name=f'User', value=f'{user.mention}', inline=True)
         embed.add_field(name=f'ID', value=f'{user.id}', inline=True)
@@ -229,12 +235,12 @@ class Events(commands.Cog, description='Events. These are all the events that ha
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
         current_guilds = len(self.bot.guilds)
-        await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(f'p.help | Serving {current_guilds} guilds.'))
+        await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(f'{self.bot.prefix}help | Serving {current_guilds} guilds.'))
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
         current_guilds = len(self.bot.guilds)
-        await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(f'p.help | Serving {current_guilds} guilds.'))
+        await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(f'{self.bot.prefix}help | Serving {current_guilds} guilds.'))
 
 def setup(bot):
     bot.add_cog(Events(bot))

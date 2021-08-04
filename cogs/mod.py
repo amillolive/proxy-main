@@ -38,7 +38,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
         data["role_id"] = role.id
         await self.bot.prefixes.upsert(data)
 
-        await ctx.reply(f"The mute role has been changed to `{role.mention}`. If you couldn't use the mute commands before, you should be able to now.")
+        await ctx.reply(f"The mute role has been changed to `{role}`. If you couldn't use the mute commands before, you should be able to now.")
 
     @commands.command(description='Mute a member. Must have set the muterole.')
     @commands.has_permissions(manage_messages=True)
@@ -56,15 +56,15 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         embed = discord.Embed(
             title = 'Muted Member',
-            description = f'This task was completed without any errors.',
-            colour = discord.Colour.gold()
+            description = 'This task was completed without any errors.',
+            colour = self.bot.mod_color
         )
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.avatar_url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
         embed.set_thumbnail(url=f'{ctx.guild.icon_url}')
-        embed.add_field(name=f'Member', value=f'{member}', inline=True)
-        embed.add_field(name=f'Reason', value=f'{reason}', inline=True)
+        embed.add_field(name='Member', value=f'{member}', inline=True)
+        embed.add_field(name='Reason', value=f'{reason}', inline=True)
 
         await ctx.reply(embed=embed)
 
@@ -87,15 +87,15 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         embed = discord.Embed(
             title = 'Muted Member',
-            description = f'This task was completed without any errors.',
-            colour = discord.Colour.gold()
+            description = 'This task was completed without any errors.',
+            colour = self.bot.mod_color
         )
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.avatar_url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
         embed.set_thumbnail(url=f'{ctx.guild.icon_url}')
-        embed.add_field(name=f'Member', value=f'{member}', inline=True)
-        embed.add_field(name=f'Duration', value=f'{amount}{unit}', inline=True)
+        embed.add_field(name='Member', value=f'{member}', inline=True)
+        embed.add_field(name='Duration', value=f'{amount}{unit}', inline=True)
 
         await ctx.reply(embed=embed)
         await asyncio.sleep(amount * multiplier[unit])
@@ -118,14 +118,14 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
         embed = discord.Embed(
             title = 'Unmuted Member',
             description = f'This task was completed without any errors.',
-            colour = discord.Colour.gold()
+            colour = self.bot.mod_color
         )
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.avatar_url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
         embed.set_thumbnail(url=f'{ctx.guild.icon_url}')
-        embed.add_field(name=f'Member', value=f'{member}', inline=True)
-        embed.add_field(name=f'Reason', value=f'{reason}', inline=True)
+        embed.add_field(name='Member', value=f'{member}', inline=True)
+        embed.add_field(name='Reason', value=f'{reason}', inline=True)
 
         await ctx.reply(embed=embed)
 
@@ -142,15 +142,15 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         embed = discord.Embed(
             title = 'Kicked Member',
-            description = f'This task was completed without any errors.',
-            colour = discord.Colour.gold()
+            description = 'This task was completed without any errors.',
+            colour = self.bot.mod_color
         )
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.avatar_url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
         embed.set_thumbnail(url=f'{ctx.guild.icon_url}')
-        embed.add_field(name=f'Member', value=f'{member}', inline=True)
-        embed.add_field(name=f'Reason', value=f'{reason}', inline=True)
+        embed.add_field(name='Member', value=f'{member}', inline=True)
+        embed.add_field(name='Reason', value=f'{reason}', inline=True)
 
         await ctx.reply(embed=embed)
 
@@ -161,15 +161,15 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         embed = discord.Embed(
             title = 'Banned Member',
-            description = f'This task was completed without any errors.',
-            colour = discord.Colour.gold()
+            description = 'This task was completed without any errors.',
+            colour = self.bot.mod_color
         )
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.avatar_url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
         embed.set_thumbnail(url=f'{ctx.guild.icon_url}')
-        embed.add_field(name=f'Member', value=f'{member}', inline=True)
-        embed.add_field(name=f'Reason', value=f'{reason}', inline=True)
+        embed.add_field(name='Member', value=f'{member}', inline=True)
+        embed.add_field(name='Reason', value=f'{reason}', inline=True)
 
         await ctx.reply(embed=embed)
 
@@ -183,15 +183,15 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
         await ctx.guild.ban(member)
         embed = discord.Embed(
             title = 'Banned Member',
-            description = f'This task was completed without any errors.',
-            colour = discord.Colour.gold()
+            description = 'This task was completed without any errors.',
+            colour = self.bot.mod_color
         )
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.avatar_url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
         embed.set_thumbnail(url=f'{ctx.guild.icon_url}')
-        embed.add_field(name=f'Member', value=f'{member}', inline=True)
-        embed.add_field(name=f'Duration', value=f'{amount}{unit}', inline=True)
+        embed.add_field(name='Member', value=f'{member}', inline=True)
+        embed.add_field(name='Duration', value=f'{amount}{unit}', inline=True)
 
         await ctx.reply(embed=embed)
         await asyncio.sleep(amount * multiplier[unit])
@@ -204,15 +204,15 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         embed = discord.Embed(
             title = 'Unbanned Member',
-            description = f'This task was completed without any errors.',
-            colour = discord.Colour.gold()
+            description = 'This task was completed without any errors.',
+            colour = self.bot.mod_color
         )
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.avatar_url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
         embed.set_thumbnail(url=f'{ctx.guild.icon_url}')
-        embed.add_field(name=f'Member', value=f'{member}', inline=True)
-        embed.add_field(name=f'Reason', value=f'{reason}', inline=True)
+        embed.add_field(name='Member', value=f'{member}', inline=True)
+        embed.add_field(name='Reason', value=f'{reason}', inline=True)
 
         await ctx.reply(embed=embed)
 
@@ -228,11 +228,12 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
         embed = discord.Embed(
             title = 'Guild Mail',
             description = f'{input}',
-            colour = discord.Colour.light_grey()
+            colour = self.bot.utils_color
         )
 
         embed.set_footer(text=f'Invoked by {ctx.author.name}, for {Role}')
         embed.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon_url}')
+        embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
 
         for member in Role.members:
             total += 1
@@ -244,12 +245,15 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         embed = discord.Embed(
             title = 'Task Completed',
-            colour = discord.Colour.light_grey()
+            colour = self.bot.utils_color,
+            description = 'This task was completed without any errors.'
         )
         embed.timestamp = datetime.datetime.utcnow()
-        embed.add_field(name=f'Total', value=f'{total}', inline=True)
-        embed.add_field(name=f'Success', value=f'{success}', inline=True)
-        embed.add_field(name=f'Failed', value=f'{fail}', inline=True)
+        embed.add_field(name='Total', value=f'{total}', inline=True)
+        embed.add_field(name='Success', value=f'{success}', inline=True)
+        embed.add_field(name='Failed', value=f'{fail}', inline=True)
+        embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
+        embed.set_footer(text=f'Invoked by {ctx.author.name}, for {Role}')
 
         await message.edit(embed=embed)
 
@@ -327,11 +331,11 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
         data = await self.bot.log_channels.find(ctx.guild.id)
 
         if not data or "channel" not in data:
-            await ctx.reply(f'Logging is already disabled in this server.')
+            await ctx.reply('Logging is already disabled in this server.')
 
         else:
             await self.bot.log_channels.delete(data)
-            await ctx.reply(f'Logging has been disabled.')
+            await ctx.reply('Logging has been disabled.')
 
 def setup(bot):
     bot.add_cog(Mod(bot))

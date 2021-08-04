@@ -50,7 +50,9 @@ async def get_prefix(bot, message):
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix = get_prefix, intents=intents, case_insensitive=True)
 
-bot.prefix = 'p.'
+load_dotenv(dotenv_path="./.env")
+
+bot.prefix = os.getenv('PREFIX')
 bot.sniped_messages = {}
 bot.private_vc = []
 bot.version = '1.65.3'

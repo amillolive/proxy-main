@@ -34,7 +34,7 @@ class Public(commands.Cog, description='Public commands. Anyone can use these!')
         fields = 0
         current = discord.Embed(
             title = f'Members in {role}',
-            description = f'This task was completed successfully',
+            description = 'This task was completed successfully',
             colour = self.bot.utils_color
         )
         current.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon_url}')
@@ -47,7 +47,7 @@ class Public(commands.Cog, description='Public commands. Anyone can use these!')
                 embeds.append(current)
                 current = discord.Embed(
                     title = f'Members in {role}',
-                    description = f'This task was completed successfully',
+                    description = 'This task was completed successfully',
                     colour = self.bot.utils_color
                 )
                 current.set_footer(text=f'Invoked by {ctx.author.name}.')
@@ -124,10 +124,10 @@ class Public(commands.Cog, description='Public commands. Anyone can use these!')
 
     @commands.command(name='8ball', description='Ask the magical 8ball a question.')
     async def _8ball(self, ctx, *, question):
-        responses = ['It is certain.',
-                     'It is decidedly so.',
-                     'Without a doubt.',
-                     'Yes, most definitely.',
+        responses = ["It is certain.",
+                     "It is decidedly so.",
+                     "Without a doubt.",
+                     "Yes, most definitely.",
                      "You may rely on it.",
                      "As I see it, yes.",
                      "Most likely.",
@@ -191,12 +191,12 @@ class Public(commands.Cog, description='Public commands. Anyone can use these!')
         embed = discord.Embed(
             colour = self.bot.utils_color,
             title = 'User Information',
-            description = f"This task was completed without any errors."
+            description = "This task was completed without any errors."
         )
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
-        embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.avatar_url}')
-        embed.set_thumbnail(url=f'{member.avatar_url}')
+        embed.set_author(name=f'{member}', icon_url=f'{member.avatar_url}')
+        embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
         embed.add_field(name='User', value=f'{member.mention}', inline=True)
         embed.add_field(name='ID', value=f'{member.id}', inline=False)
         embed.add_field(name='Bot', value=f'{member.bot}', inline=True)
@@ -219,11 +219,12 @@ class Public(commands.Cog, description='Public commands. Anyone can use these!')
         embed = discord.Embed(
             colour = self.bot.utils_color,
             title = 'Server Information',
-            description = f"This task was completed without any errors."
+            description = "This task was completed without any errors."
         )
         embed.timestamp = datetime.datetime.utcnow()
-        embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.avatar_url}')
-        embed.set_thumbnail(url=f'{ctx.guild.icon_url}')
+        embed.set_footer(text=f'Invoked by {ctx.author.name}')
+        embed.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon_url}')
+        embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
         embed.add_field(name='Guild', value=f'{ctx.guild.name}', inline=True)
         embed.add_field(name='Region', value=f'{ctx.guild.region}', inline=True)
         embed.add_field(name='ID', value=f'{ctx.guild.id}', inline=False)
