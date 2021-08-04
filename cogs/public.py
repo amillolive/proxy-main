@@ -18,7 +18,6 @@ import discordmongo
 from .classes import MXRoleConverter
 from .classes import MXDurationConverter
 import motor.motor_asyncio
-import bson
 
 if __name__ == '__main__':
     os.system('python main.py')

@@ -9,5 +9,4 @@ discordmongopy
 motor
 dnspython
 discord.py[voice]
-bson
 python-dotenv

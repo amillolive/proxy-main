@@ -16,7 +16,6 @@ import traceback
 import sys
 import discordmongo
 import motor.motor_asyncio
-import bson
 
 class MXRoleConverter(commands.RoleConverter):
     async def convert(self, ctx, argument):
