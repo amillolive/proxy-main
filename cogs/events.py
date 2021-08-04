@@ -124,7 +124,7 @@ class Events(commands.Cog, description='Events. These are all the events that ha
         embed.set_author(name=f'{role}', icon_url=f'{self.bot.user.avatar_url}')
         embed.set_footer(text=f'Event logging.')
         embed.set_thumbnail(url=f'{channel.guild.icon_url}')
-        embed.add_field(name=f'Role', value=f'{role.mention}', inline=True)
+        embed.add_field(name=f'Role', value=f'{role.name}', inline=True)
         embed.add_field(name=f'ID', value=f'{role.id}', inline=True)
 
         await channel.send(embed=embed)
@@ -145,10 +145,10 @@ class Events(commands.Cog, description='Events. These are all the events that ha
             colour = self.bot.logging_color
         )
         embed.timestamp = datetime.datetime.utcnow()
-        embed.set_author(name=f'{role.name}', icon_url=f'{self.bot.user.avatar_url}')
+        embed.set_author(name=f'{role}', icon_url=f'{self.bot.user.avatar_url}')
         embed.set_footer(text=f'Event logging.')
         embed.set_thumbnail(url=f'{channel.guild.icon_url}')
-        embed.add_field(name=f'Role', value=f'{role.mention}', inline=True)
+        embed.add_field(name=f'Role', value=f'{role.name}', inline=True)
         embed.add_field(name=f'ID', value=f'{role.id}', inline=True)
 
         await channel.send(embed=embed)
