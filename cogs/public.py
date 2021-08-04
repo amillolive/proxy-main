@@ -40,6 +40,7 @@ class Public(commands.Cog, description='Public commands. Anyone can use these!')
         current.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon_url}')
         current.timestamp = datetime.datetime.utcnow()
         current.set_footer(text=f'Invoked by {ctx.author.name}.')
+        current.set_thumbnail(url=f'{self.bot.user.avatar_url}')
 
         for member in role.members:
             fields += 1
@@ -52,6 +53,7 @@ class Public(commands.Cog, description='Public commands. Anyone can use these!')
                 )
                 current.set_footer(text=f'Invoked by {ctx.author.name}.')
                 current.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon_url}')
+                current.set_thumbnail(url=f'{self.bot.user.avatar_url}')
                 current.timestamp = datetime.datetime.utcnow()
                 fields = 0
                 continue

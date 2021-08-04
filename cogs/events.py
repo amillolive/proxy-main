@@ -79,7 +79,7 @@ class Events(commands.Cog, description='Events. These are all the events that ha
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_author(name=f'{ctx.author}', icon_url=f'{ctx.author.avatar_url}')
         embed.set_footer(text=f'Error Log.')
-        embed.set_thumbnail(url=f'{ctx.guild.icon_url}')
+        embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
         embed.add_field(name=f'Error', value=f'{error}', inline=False)
         await ctx.reply(embed=embed)
 
