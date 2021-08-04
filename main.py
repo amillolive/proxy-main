@@ -19,7 +19,6 @@ import sys
 import discordmongo
 import motor.motor_asyncio
 from dotenv import load_dotenv
-import contextlib
 
 # Help Command Subclass
 

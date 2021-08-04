@@ -11,4 +11,3 @@ dnspython
 discord.py[voice]
 bson
 python-dotenv
-contextlib
