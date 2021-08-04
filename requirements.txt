@@ -1,0 +1,14 @@
+git+https://github.com/Rapptz/discord.py
+git+https://github.com/LiBa001/disputils
+PyNaCl
+pandas
+async-timeout
+requests
+asyncpraw
+discordmongopy
+motor
+dnspython
+discord.py[voice]
+bson
+python-dotenv
+contextlib
