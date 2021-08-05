@@ -19,13 +19,10 @@ from .classes import MXRoleConverter
 from .classes import MXDurationConverter
 import motor.motor_asyncio
 
-if __name__ == '__main__':
-    os.system('python main.py')
-
-class Public(commands.Cog, description='Public commands. Anyone can use these!'):
+class Utils(commands.Cog, description='Utils commands. Used mainly for gathering and sending info.'):
     def __init__(self, bot):
         self.bot = bot
-        print('Public Active')
+        print('Utils Active')
 
     @commands.command(description='Get a list of members in a role.')
     async def members(self, ctx, *, role : MXRoleConverter):
@@ -64,126 +61,6 @@ class Public(commands.Cog, description='Public commands. Anyone can use these!')
 
         paginator = BotEmbedPaginator(ctx, embeds)
         await paginator.run()
-
-    @commands.command(description='Get a meme from reddit.')
-    async def meme(self, ctx):
-        subreddit = await self.bot.reddit_task.subreddit("memes")
-        submission = random.choice([submission async for submission in subreddit.hot(limit=50)])
-
-        embed = discord.Embed(
-            colour = self.bot.api_color,
-            title = f'{submission.title}',
-            description = f"r/{submission.subreddit}"
-        )
-        embed.timestamp = datetime.datetime.utcnow()
-        embed.set_footer(text=f'Invoked by {ctx.author.name}')
-        embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.avatar_url}')
-        embed.set_image(url=f'{submission.url}')
-        embed.add_field(name='Author', value=f'{submission.author}', inline=True)
-        embed.add_field(name='Upvotes', value=f'{submission.score}')
-        await ctx.reply(embed=embed)
-
-    @commands.command(description='Create a temporary voice channel for yourself.')
-    async def createvoice(self, ctx, *, name):
-        category = ctx.channel.category
-        overwrites = {
-            ctx.author: discord.PermissionOverwrite(
-                connect=True,
-                speak=True,
-                mute_members=True,
-                deafen_members=True,
-                manage_channels=True,
-                manage_permissions=True,
-                move_members=True
-            ),
-            ctx.guild.default_role: discord.PermissionOverwrite(
-                connect=False,
-                speak=False,
-                mute_members=False,
-                deafen_members=False,
-                manage_channels=False,
-                manage_permissions=False
-            )
-        }
-        channel = await ctx.guild.create_voice_channel(name=name, overwrites=overwrites, category=category, reason=f'Private voice for {ctx.author}.')
-        self.bot.private_vc.append(channel.id)
-        print(self.bot.private_vc)
-        await ctx.reply('Private voice channel created.')
-        return
-
-    @commands.command(description='Have the bot repeat what you say.')
-    async def echo(self, ctx, *, message : commands.clean_content):
-        await ctx.reply(message)
-
-    @commands.command(description='Flip a coin.')
-    async def coinflip(self, ctx):
-        n = random.randint(0, 1)
-        await ctx.reply("Heads!" if n == 1 else "Tails!")
-
-    @commands.command(description='Check the bots latency.')
-    async def ping(self, ctx):
-        await ctx.reply(f'**Pong**! {round(self.bot.latency * 1000)}ms')
-
-    @commands.command(name='8ball', description='Ask the magical 8ball a question.')
-    async def _8ball(self, ctx, *, question):
-        responses = ["It is certain.",
-                     "It is decidedly so.",
-                     "Without a doubt.",
-                     "Yes, most definitely.",
-                     "You may rely on it.",
-                     "As I see it, yes.",
-                     "Most likely.",
-                     "Outlook good.",
-                     "Yes.",
-                     "Signs point to yes.",
-                     "Reply hazy, try again.",
-                     "Ask again later.",
-                     "Better not tell you now.",
-                     "Cannot predict now.",
-                     "Concentrate and ask again.",
-                     "Don't count on it.",
-                     "My reply is no.",
-                     "My sources say no.",
-                     "Outlook not so good.",
-                     "Very doubtful."]
-
-        await ctx.send(f'**Question**: {question}\n**Answer**: {random.choice(responses)}')
-
-    @commands.command(description='Get a dog from reddit.')
-    async def dogs(self, ctx):
-        subreddit = await self.bot.reddit_task.subreddit("rarepuppers")
-        submission = random.choice([submission async for submission in subreddit.hot(limit=50)])
-
-        embed = discord.Embed(
-            colour = self.bot.api_color,
-            title = f'{submission.title}',
-            description = f"r/{submission.subreddit}"
-        )
-        embed.timestamp = datetime.datetime.utcnow()
-        embed.set_footer(text=f'Invoked by {ctx.author.name}')
-        embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.avatar_url}')
-        embed.set_image(url=f'{submission.url}')
-        embed.add_field(name='Author', value=f'{submission.author}', inline=True)
-        embed.add_field(name='Upvotes', value=f'{submission.score}')
-        await ctx.reply(embed=embed)
-
-    @commands.command(description='Get a gaming setup from reddit.')
-    async def gamingsetup(self, ctx):
-        subreddit = await self.bot.reddit_task.subreddit("battlestations")
-        submission = random.choice([submission async for submission in subreddit.hot(limit=50)])
-
-        embed = discord.Embed(
-            colour = self.bot.api_color,
-            title = f'{submission.title}',
-            description = f"r/{submission.subreddit}"
-        )
-        embed.timestamp = datetime.datetime.utcnow()
-        embed.set_footer(text=f'Invoked by {ctx.author.name}')
-        embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.avatar_url}')
-        embed.set_image(url=f'{submission.url}')
-        embed.add_field(name='Author', value=f'{submission.author}', inline=True)
-        embed.add_field(name='Upvotes', value=f'{submission.score}')
-        await ctx.reply(embed=embed)
 
     @commands.command(aliases=['whois'], description='Get info about a user.')
     async def userinfo(self, ctx, member : commands.MemberConverter = None):
@@ -244,6 +121,50 @@ class Public(commands.Cog, description='Public commands. Anyone can use these!')
 
         await ctx.reply(embed=embed)
 
+    @commands.command(description='Check the bots latency.')
+    async def ping(self, ctx):
+        await ctx.reply(f'**Pong**! {round(self.bot.latency * 1000)}ms')
+
+    @commands.command(description='Send a guild message to members in a role.')
+    @commands.has_permissions(mention_everyone=True)
+    async def msgrole(self, ctx, Role : discord.Role, *, input):
+        message = await ctx.reply('Working...')
+
+        success = 0
+        fail = 0
+        total = 0
+
+        embed = discord.Embed(
+            title = 'Guild Mail',
+            description = f'{input}',
+            colour = self.bot.utils_color
+        )
+
+        embed.set_footer(text=f'Invoked by {ctx.author.name}, for {Role}')
+        embed.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon_url}')
+        embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
+
+        for member in Role.members:
+            total += 1
+            try:
+                await member.send(embed=embed)
+                success += 1
+            except:
+                fail += 1
+
+        embed = discord.Embed(
+            title = 'Task Completed',
+            colour = self.bot.utils_color,
+            description = 'This task was completed without any errors.'
+        )
+        embed.timestamp = datetime.datetime.utcnow()
+        embed.add_field(name='Total', value=f'{total}', inline=True)
+        embed.add_field(name='Success', value=f'{success}', inline=True)
+        embed.add_field(name='Failed', value=f'{fail}', inline=True)
+        embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
+        embed.set_footer(text=f'Invoked by {ctx.author.name}, for {Role}')
+
+        await message.edit(embed=embed)
 
 def setup(bot):
-    bot.add_cog(Public(bot))
+    bot.add_cog(Utils(bot))
