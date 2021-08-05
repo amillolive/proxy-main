@@ -216,47 +216,6 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         await ctx.reply(embed=embed)
 
-    @commands.command(description='Send a guild message to members in a role.')
-    @commands.has_permissions(mention_everyone=True)
-    async def msgrole(self, ctx, Role : discord.Role, *, input):
-        message = await ctx.reply('Working...')
-
-        success = 0
-        fail = 0
-        total = 0
-
-        embed = discord.Embed(
-            title = 'Guild Mail',
-            description = f'{input}',
-            colour = self.bot.utils_color
-        )
-
-        embed.set_footer(text=f'Invoked by {ctx.author.name}, for {Role}')
-        embed.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon_url}')
-        embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
-
-        for member in Role.members:
-            total += 1
-            try:
-                await member.send(embed=embed)
-                success += 1
-            except:
-                fail += 1
-
-        embed = discord.Embed(
-            title = 'Task Completed',
-            colour = self.bot.utils_color,
-            description = 'This task was completed without any errors.'
-        )
-        embed.timestamp = datetime.datetime.utcnow()
-        embed.add_field(name='Total', value=f'{total}', inline=True)
-        embed.add_field(name='Success', value=f'{success}', inline=True)
-        embed.add_field(name='Failed', value=f'{fail}', inline=True)
-        embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
-        embed.set_footer(text=f'Invoked by {ctx.author.name}, for {Role}')
-
-        await message.edit(embed=embed)
-
     @commands.command(description='Set the server prefix.')
     @commands.has_permissions(manage_guild=True)
     async def prefix(self, ctx, *, prefix):
