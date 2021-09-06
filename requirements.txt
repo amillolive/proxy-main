@@ -10,3 +10,4 @@ motor
 dnspython
 discord.py[voice]
 python-dotenv
+discord-components

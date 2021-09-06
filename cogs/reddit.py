@@ -18,6 +18,7 @@ import discordmongo
 from .classes import MXRoleConverter
 from .classes import MXDurationConverter
 import motor.motor_asyncio
+from discord_components import *
 
 if __name__ == '__main__':
     os.system('python main.py')
@@ -29,6 +30,8 @@ class Reddit(commands.Cog, description='Public commands. Anyone can use these!')
 
     @commands.command(description='Get a meme from reddit.')
     async def meme(self, ctx):
+        message = await ctx.reply('Working...')
+
         subreddit = await self.bot.reddit_task.subreddit("memes")
         submission = random.choice([submission async for submission in subreddit.hot(limit=50)])
 
@@ -43,10 +46,13 @@ class Reddit(commands.Cog, description='Public commands. Anyone can use these!')
         embed.set_image(url=f'{submission.url}')
         embed.add_field(name='Author', value=f'{submission.author}', inline=True)
         embed.add_field(name='Upvotes', value=f'{submission.score}')
-        await ctx.reply(embed=embed)
+        
+        await message.edit(embed=embed)
 
     @commands.command(description='Get a dog from reddit.')
     async def dogs(self, ctx):
+        message = await ctx.reply('Working...')
+
         subreddit = await self.bot.reddit_task.subreddit("rarepuppers")
         submission = random.choice([submission async for submission in subreddit.hot(limit=50)])
 
@@ -61,10 +67,13 @@ class Reddit(commands.Cog, description='Public commands. Anyone can use these!')
         embed.set_image(url=f'{submission.url}')
         embed.add_field(name='Author', value=f'{submission.author}', inline=True)
         embed.add_field(name='Upvotes', value=f'{submission.score}')
-        await ctx.reply(embed=embed)
+        
+        await message.edit(embed=embed)
 
     @commands.command(description='Get a gaming setup from reddit.')
     async def gamingsetup(self, ctx):
+        message = await ctx.reply('Working...')
+
         subreddit = await self.bot.reddit_task.subreddit("battlestations")
         submission = random.choice([submission async for submission in subreddit.hot(limit=50)])
 
@@ -79,7 +88,8 @@ class Reddit(commands.Cog, description='Public commands. Anyone can use these!')
         embed.set_image(url=f'{submission.url}')
         embed.add_field(name='Author', value=f'{submission.author}', inline=True)
         embed.add_field(name='Upvotes', value=f'{submission.score}')
-        await ctx.reply(embed=embed)
+        
+        await message.edit(embed=embed)
 
 def setup(bot):
     bot.add_cog(Reddit(bot))

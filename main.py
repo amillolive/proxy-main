@@ -19,6 +19,7 @@ import sys
 import discordmongo
 import motor.motor_asyncio
 from dotenv import load_dotenv
+from discord_components import *
 
 # Help Command Subclass
 
@@ -53,12 +54,9 @@ bot = commands.Bot(command_prefix = get_prefix, intents=intents, case_insensitiv
 load_dotenv(dotenv_path="./.env")
 
 bot.prefix = os.getenv('PREFIX')
-bot.sniped_messages = {}
-bot.private_vc = []
 bot.version = '1.65.3'
 bot.help_command = ModifiedMinimalHelpCommand()
-
-load_dotenv(dotenv_path="./.env")
+bot.invite_link = os.getenv('INVITE_LINK')
 
 MONGO_CONNECTION = os.getenv('MONGO_CONNECTION')
 
@@ -76,6 +74,13 @@ bot.logging_color = discord.Colour.red()
 bot.mod_color = discord.Colour.dark_red()
 bot.api_color = discord.Colour.orange()
 bot.error_color = discord.Colour.dark_orange()
+
+@tasks.loop(seconds=300.0)
+async def presence_update(bot):
+    guild_count = len(bot.guilds)
+    await bot.change_presence(status=discord.Status.online, activity=discord.Game(f'{bot.prefix}help | Serving {guild_count} guilds.'))
+
+bot.presence_update = presence_update
 
 for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):

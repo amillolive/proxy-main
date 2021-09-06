@@ -18,6 +18,7 @@ import discordmongo
 from .classes import MXRoleConverter
 from .classes import MXDurationConverter
 import motor.motor_asyncio
+from discord_components import *
 
 if __name__ == '__main__':
     os.system('python main.py')
@@ -30,13 +31,13 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
     @commands.command(description='Set the muterole for the guild.')
     @commands.has_permissions(manage_messages=True)
     async def muterole(self, ctx, role : MXRoleConverter):
-        data = await self.bot.prefixes.find(ctx.guild.id)
+        data = await self.bot.mute_roles.find(ctx.guild.id)
 
         if not data or "role_id" not in data:
             data = {"_id": ctx.guild.id, "role_id": role.id}
 
         data["role_id"] = role.id
-        await self.bot.prefixes.upsert(data)
+        await self.bot.mute_roles.upsert(data)
 
         await ctx.reply(f"The mute role has been changed to `{role}`. If you couldn't use the mute commands before, you should be able to now.")
 

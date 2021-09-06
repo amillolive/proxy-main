@@ -18,6 +18,8 @@ import discordmongo
 from .classes import MXRoleConverter
 from .classes import MXDurationConverter
 import motor.motor_asyncio
+from discord_components import *
+from discord import Spotify
 
 class Utils(commands.Cog, description='Utils commands. Used mainly for gathering and sending info.'):
     def __init__(self, bot):
@@ -64,6 +66,8 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
 
     @commands.command(aliases=['whois'], description='Get info about a user.')
     async def userinfo(self, ctx, member : commands.MemberConverter = None):
+        message = await ctx.reply('Working...')
+
         if member is None:
             member = ctx.author
 
@@ -81,15 +85,43 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         embed.add_field(name='Bot', value=f'{member.bot}', inline=True)
         embed.add_field(name='Top Role', value=f'{member.top_role.mention}', inline=True)
         embed.add_field(name='Status', value=f'{member.status}', inline=True)
-        embed.add_field(name='Activity', value=f'{member.activity}', inline=True)
+        embed.add_field(name='Activity', value=f'{member.activity.name}', inline=True)
         embed.add_field(name='Created At', value=f'{member.created_at.strftime("%m/%d/%Y %H:%M:%S")}', inline=False)
         embed.add_field(name='Joined At', value=f'{member.joined_at.strftime("%m/%d/%Y %H:%M:%S")}', inline=False)
         embed.add_field(name='Boosted', value=bool(member.premium_since), inline=True)
 
-        await ctx.reply(embed=embed)
+        if member.activity.name == 'Spotify':
+            await message.edit(embed=embed, components=[Button(label='More Info!', style=ButtonStyle.green, custom_id='SpotifyButton')])
+            
+            interaction = await self.bot.wait_for("button_click", check=lambda i: i.component.label.startswith('More'))
+            
+            embed = discord.Embed(
+                colour = member.activity.colour,
+                title = 'Activity Information',
+                description = "This task was completed without any errors."
+            )
+            embed.timestamp = datetime.datetime.utcnow()
+            embed.set_footer(text=f'Invoked by {ctx.author.name}')
+            embed.set_author(name=f'{member}', icon_url=f'{member.avatar_url}')
+            embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
+            embed.set_image(url=f'{member.activity.album_cover_url}')
+            embed.add_field(name='Activity', value=f'{member.activity.name}', inline=True)
+
+            for artist in member.activity.artists:
+                embed.add_field(name='Artist', value=f'{artist}', inline=True)
+
+            embed.add_field(name='Song', value=f'{member.activity.title}', inline=True)
+            embed.add_field(name='Album', value=f'{member.activity.album}', inline=True)
+
+            await interaction.respond(embed=embed)
+            return
+
+        await message.edit(embed=embed)
 
     @commands.command(description='Get info about a server.')
     async def serverinfo(self, ctx):
+        message = await ctx.reply('Working...')
+
         statuses = [len(list(filter(lambda m: str(m.status) == "online", ctx.guild.members))),
                     len(list(filter(lambda m: str(m.status) == "idle", ctx.guild.members))),
                     len(list(filter(lambda m: str(m.status) == "dnd", ctx.guild.members))),
@@ -119,7 +151,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         embed.add_field(name='Roles', value=len(ctx.guild.roles), inline=True)
         embed.add_field(name='Invites', value=len(await ctx.guild.invites()), inline=True)
 
-        await ctx.reply(embed=embed)
+        await message.edit(embed=embed)
 
     @commands.command(description='Check the bots latency.')
     async def ping(self, ctx):
@@ -165,6 +197,20 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         embed.set_footer(text=f'Invoked by {ctx.author.name}, for {Role}')
 
         await message.edit(embed=embed)
+
+    @commands.command(description='Invite the bot!')
+    async def invite(self, ctx):
+        embed = discord.Embed(
+            title = 'Link Generated.',
+            colour = self.bot.utils_color,
+            description = 'Before you invite the bot, please take a few moments to read the field below.'
+        )
+        embed.timestamp = datetime.datetime.utcnow()
+        embed.add_field(name='Thank you!', value=f"This bot is a project I made for myself and I'm glad you want to invite it to your server, it means the world. This bot has been improving at the same rate as my skillset. Each new skill I learn, I try and add it to the bot. Once again. Thanks.", inline=True)
+        embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
+        embed.set_footer(text=f'Invoked by {ctx.author.name}')
+
+        await ctx.send(embed=embed, components=[Button(label='Invite Me!', style=ButtonStyle.URL, url=self.bot.invite_link)])
 
 def setup(bot):
     bot.add_cog(Utils(bot))

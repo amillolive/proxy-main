@@ -2,6 +2,7 @@ import asyncio
 import asyncpraw
 from asyncpraw import Reddit
 import discord
+from discord_components.client import DiscordComponents
 import disputils
 import json
 import random
@@ -18,6 +19,7 @@ import discordmongo
 from .classes import MXRoleConverter
 from .classes import MXDurationConverter
 import motor.motor_asyncio
+from discord_components import *
 
 if __name__ == '__main__':
     os.system('python main.py')
@@ -57,8 +59,8 @@ class Events(commands.Cog, description='Events. These are all the events that ha
     @commands.Cog.listener()
     async def on_ready(self):
         print('------')
-        current_guilds = len(self.bot.guilds)
-        await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(f'{self.bot.prefix}help | Serving {current_guilds} guilds.'))
+        self.bot.presence_update.start(self.bot)
+        DiscordComponents(self.bot)
         print(f'Logged in as: {self.bot.user.name}')
         print('Succesful connection to MongoDB.')
         self.bot.reddit_task = asyncpraw.Reddit(
@@ -231,16 +233,6 @@ class Events(commands.Cog, description='Events. These are all the events that ha
         embed.add_field(name=f'ID', value=f'{user.id}', inline=True)
 
         await channel.send(embed=embed)
-
-    @commands.Cog.listener()
-    async def on_guild_join(self, guild):
-        current_guilds = len(self.bot.guilds)
-        await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(f'{self.bot.prefix}help | Serving {current_guilds} guilds.'))
-
-    @commands.Cog.listener()
-    async def on_guild_remove(self, guild):
-        current_guilds = len(self.bot.guilds)
-        await self.bot.change_presence(status=discord.Status.online, activity=discord.Game(f'{self.bot.prefix}help | Serving {current_guilds} guilds.'))
 
 def setup(bot):
     bot.add_cog(Events(bot))
