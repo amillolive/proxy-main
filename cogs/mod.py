@@ -261,7 +261,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         for role in ctx.guild.roles:
             overwrites[role] = discord.PermissionOverwrite(
-                send_messages=False
+                send_messages=True
             )
 
         await channel.edit(overwrites=overwrites, reason=f'Locked channel {channel.name}.')
