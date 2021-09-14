@@ -49,10 +49,10 @@ class Events(commands.Cog, description='Events. These are all the events that ha
         )
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_author(name=f'{message.author}', icon_url=f'{message.author.avatar_url}')
-        embed.set_footer(text=f'Event logging.')
+        embed.set_footer(text='Event logging.')
         embed.set_thumbnail(url=f'{channel.guild.icon_url}')
-        embed.add_field(name=f'User', value=f'{message.author.mention}', inline=True)
-        embed.add_field(name=f'Message', value=f'{message.content}', inline=True)
+        embed.add_field(name='User', value=f'{message.author.mention}', inline=True)
+        embed.add_field(name='Message', value=f'{message.content}', inline=True)
 
         await channel.send(embed=embed)
 
@@ -80,10 +80,11 @@ class Events(commands.Cog, description='Events. These are all the events that ha
         )
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_author(name=f'{ctx.author}', icon_url=f'{ctx.author.avatar_url}')
-        embed.set_footer(text=f'Error Log.')
+        embed.set_footer(text='Error Log.')
         embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
-        embed.add_field(name=f'Error', value=f'{error}', inline=False)
+        embed.add_field(name='Error', value=f'{error}', inline=False)
         await ctx.reply(embed=embed)
+        raise error
 
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):
@@ -105,11 +106,11 @@ class Events(commands.Cog, description='Events. These are all the events that ha
         )
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_author(name=f'{before.author}', icon_url=f'{before.author.avatar_url}')
-        embed.set_footer(text=f'Event logging.')
+        embed.set_footer(text='Event logging.')
         embed.set_thumbnail(url=f'{channel.guild.icon_url}')
-        embed.add_field(name=f'Before', value=f'{before.content}', inline=True)
-        embed.add_field(name=f'After', value=f'{after.content}', inline=True)
-        embed.add_field(name=f'ID', value=f'{after.id}', inline=True)
+        embed.add_field(name='Before', value=f'{before.content}', inline=True)
+        embed.add_field(name='After', value=f'{after.content}', inline=True)
+        embed.add_field(name='ID', value=f'{after.id}', inline=True)
 
         await channel.send(embed=embed)
 
@@ -132,8 +133,8 @@ class Events(commands.Cog, description='Events. These are all the events that ha
         embed.set_author(name=f'{role}', icon_url=f'{self.bot.user.avatar_url}')
         embed.set_footer(text='Event logging.')
         embed.set_thumbnail(url=f'{channel.guild.icon_url}')
-        embed.add_field(name=f'Role', value=f'{role.name}', inline=True)
-        embed.add_field(name=f'ID', value=f'{role.id}', inline=True)
+        embed.add_field(name='Role', value=f'{role.name}', inline=True)
+        embed.add_field(name='ID', value=f'{role.id}', inline=True)
 
         await channel.send(embed=embed)
 
@@ -154,10 +155,10 @@ class Events(commands.Cog, description='Events. These are all the events that ha
         )
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_author(name=f'{role}', icon_url=f'{self.bot.user.avatar_url}')
-        embed.set_footer(text=f'Event logging.')
+        embed.set_footer(text='Event logging.')
         embed.set_thumbnail(url=f'{channel.guild.icon_url}')
-        embed.add_field(name=f'Role', value=f'{role.name}', inline=True)
-        embed.add_field(name=f'ID', value=f'{role.id}', inline=True)
+        embed.add_field(name='Role', value=f'{role.name}', inline=True)
+        embed.add_field(name='ID', value=f'{role.id}', inline=True)
 
         await channel.send(embed=embed)
 
@@ -180,9 +181,9 @@ class Events(commands.Cog, description='Events. These are all the events that ha
         embed.set_author(name=f'{after}', icon_url=f'{self.bot.user.avatar_url}')
         embed.set_footer(text='Event logging.')
         embed.set_thumbnail(url=f'{channel.guild.icon_url}')
-        embed.add_field(name=f'Before', value=f'{before.mention}', inline=True)
-        embed.add_field(name=f'After', value=f'{after.mention}', inline=True)
-        embed.add_field(name=f'ID', value=f'{after.id}', inline=True)
+        embed.add_field(name='Before', value=f'{before.mention}', inline=True)
+        embed.add_field(name='After', value=f'{after.mention}', inline=True)
+        embed.add_field(name='ID', value=f'{after.id}', inline=True)
 
         await channel.send(embed=embed)
 
@@ -205,8 +206,8 @@ class Events(commands.Cog, description='Events. These are all the events that ha
         embed.set_author(name=f'{user}', icon_url=f'{user.avatar_url}')
         embed.set_footer(text='Event logging.')
         embed.set_thumbnail(url=f'{guild.icon_url}')
-        embed.add_field(name=f'User', value=f'{user.mention}', inline=True)
-        embed.add_field(name=f'ID', value=f'{user.id}', inline=True)
+        embed.add_field(name='User', value=f'{user.mention}', inline=True)
+        embed.add_field(name='ID', value=f'{user.id}', inline=True)
 
         await channel.send(embed=embed)
 
@@ -229,8 +230,8 @@ class Events(commands.Cog, description='Events. These are all the events that ha
         embed.set_author(name=f'{user}', icon_url=f'{user.avatar_url}')
         embed.set_footer(text='Event logging.')
         embed.set_thumbnail(url=f'{guild.icon_url}')
-        embed.add_field(name=f'User', value=f'{user.mention}', inline=True)
-        embed.add_field(name=f'ID', value=f'{user.id}', inline=True)
+        embed.add_field(name='User', value=f'{user.mention}', inline=True)
+        embed.add_field(name='ID', value=f'{user.id}', inline=True)
 
         await channel.send(embed=embed)
 

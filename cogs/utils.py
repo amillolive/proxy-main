@@ -21,6 +21,9 @@ import motor.motor_asyncio
 from discord_components import *
 from discord import Spotify
 
+if __name__ == '__main__':
+    os.system('python main.py')
+
 class Utils(commands.Cog, description='Utils commands. Used mainly for gathering and sending info.'):
     def __init__(self, bot):
         self.bot = bot
@@ -31,6 +34,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         embeds = []
 
         fields = 0
+
         current = discord.Embed(
             title = f'Members in {role}',
             description = 'This task was completed successfully',
@@ -56,7 +60,21 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
                 current.timestamp = datetime.datetime.utcnow()
                 fields = 0
                 continue
-            current.add_field(name=str(member.top_role), value=f'`User` {member.mention} \n `Tag` {member}', inline=True)
+            current.add_field(name=f'{member.top_role}', value=f'`User` {member.mention} \n `Tag` {member}', inline=True)
+
+        if not current.fields:
+            embed = discord.Embed(
+                title = 'No members found',
+                description = f'No members were found in {role}.',
+                colour = self.bot.utils_color
+            )
+            embed.set_footer(text=f'Invoked by {ctx.author.name}.')
+            embed.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon_url}')
+            embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
+            embed.timestamp = datetime.datetime.utcnow()
+
+            await ctx.reply(embed=embed)
+            return
 
         if not embeds:
             embeds.append(current)
@@ -92,9 +110,9 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
 
         if member.activity.name == 'Spotify':
             await message.edit(embed=embed, components=[Button(label='More Info!', style=ButtonStyle.green, custom_id='SpotifyButton')])
-            
+
             interaction = await self.bot.wait_for("button_click", check=lambda i: i.component.label.startswith('More'))
-            
+
             embed = discord.Embed(
                 colour = member.activity.colour,
                 title = 'Activity Information',
@@ -105,13 +123,13 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
             embed.set_author(name=f'{member}', icon_url=f'{member.avatar_url}')
             embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
             embed.set_image(url=f'{member.activity.album_cover_url}')
-            embed.add_field(name='Activity', value=f'{member.activity.name}', inline=True)
+            embed.add_field(name='Activity', value=f'{member.activity.name}', inline=False)
 
             for artist in member.activity.artists:
-                embed.add_field(name='Artist', value=f'{artist}', inline=True)
+                embed.add_field(name='Artist', value=f'{artist}', inline=False)
 
-            embed.add_field(name='Song', value=f'{member.activity.title}', inline=True)
-            embed.add_field(name='Album', value=f'{member.activity.album}', inline=True)
+            embed.add_field(name='Song', value=f'{member.activity.title}', inline=False)
+            embed.add_field(name='Album', value=f'{member.activity.album}', inline=False)
 
             await interaction.respond(embed=embed)
             return
@@ -122,10 +140,10 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
     async def serverinfo(self, ctx):
         message = await ctx.reply('Working...')
 
-        statuses = [len(list(filter(lambda m: str(m.status) == "online", ctx.guild.members))),
-                    len(list(filter(lambda m: str(m.status) == "idle", ctx.guild.members))),
-                    len(list(filter(lambda m: str(m.status) == "dnd", ctx.guild.members))),
-                    len(list(filter(lambda m: str(m.status) == "offline", ctx.guild.members)))]
+        statuses = [len(list(filter(lambda m: f'{m.status}' == "online", ctx.guild.members))),
+                    len(list(filter(lambda m: f'{m.status}' == "idle", ctx.guild.members))),
+                    len(list(filter(lambda m: f'{m.status}' == "dnd", ctx.guild.members))),
+                    len(list(filter(lambda m: f'{m.status}' == "offline", ctx.guild.members)))]
 
         embed = discord.Embed(
             colour = self.bot.utils_color,

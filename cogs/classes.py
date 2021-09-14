@@ -17,6 +17,9 @@ import sys
 import discordmongo
 import motor.motor_asyncio
 
+if __name__ == '__main__':
+    os.system('python main.py')
+
 class MXRoleConverter(commands.RoleConverter):
     async def convert(self, ctx, argument):
         role = discord.utils.find(lambda r: argument.lower() in r.name.lower(), ctx.guild.roles)

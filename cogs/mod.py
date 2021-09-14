@@ -62,7 +62,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
         )
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.avatar_url}')
-        embed.set_footer(text=f'Invoked by {ctx.author.name}')
+        embed.set_footer(text='Invoked by {ctx.author.name}')
         embed.set_thumbnail(url=f'{ctx.guild.icon_url}')
         embed.add_field(name='Member', value=f'{member}', inline=True)
         embed.add_field(name='Reason', value=f'{reason}', inline=True)
@@ -118,7 +118,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         embed = discord.Embed(
             title = 'Unmuted Member',
-            description = f'This task was completed without any errors.',
+            description = 'This task was completed without any errors.',
             colour = self.bot.mod_color
         )
         embed.timestamp = datetime.datetime.utcnow()
@@ -228,37 +228,45 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
         data["prefix"] = prefix
         await self.bot.prefixes.upsert(data)
 
-        await ctx.reply(f"This servers prefix has been changed to `{prefix}`, enjoy!")
+        await ctx.reply(f"This servers prefix has been changed to | `{prefix}` | enjoy!")
 
     @commands.command(description='Lock a channel.')
     @commands.has_permissions(manage_channels=True)
     async def lock(self, ctx, channel : commands.TextChannelConverter = None):
+        message = await ctx.reply('Working...')
+
         if channel is None:
             channel = ctx.channel
 
-        overwrites = {
-            ctx.guild.default_role: discord.PermissionOverwrite(
+        overwrites = {}
+
+        for role in ctx.guild.roles:
+            overwrites[role] = discord.PermissionOverwrite(
                 send_messages=False
             )
-        }
+
         await channel.edit(overwrites=overwrites, reason=f'Locked channel {channel.name}.')
 
-        await ctx.reply(f'Successfully locked {channel.mention}. Refer to the unlock command to unlock this channel.')
+        await message.edit(content=f'Successfully locked {channel.mention}. Refer to the unlock command to unlock this channel.')
 
     @commands.command(description='Unlock a channel.')
     @commands.has_permissions(manage_channels=True)
     async def unlock(self, ctx, channel : commands.TextChannelConverter = None):
+        message = await ctx.reply('Working...')
+
         if channel is None:
             channel = ctx.channel
 
-        overwrites = {
-            ctx.guild.default_role: discord.PermissionOverwrite(
-                send_messages=True
+        overwrites = {}
+
+        for role in ctx.guild.roles:
+            overwrites[role] = discord.PermissionOverwrite(
+                send_messages=False
             )
-        }
+
         await channel.edit(overwrites=overwrites, reason=f'Locked channel {channel.name}.')
 
-        await ctx.reply(f'Successfully unlocked {channel.mention}. Refer to the lock command to lock this channel.')
+        await message.edit(content=f'Successfully unlocked {channel.mention}. Refer to the lock command to lock this channel.')
 
     @commands.command(description='Give a member a role./Take away a members role.')
     @commands.has_permissions(manage_roles=True)

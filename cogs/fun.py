@@ -19,6 +19,9 @@ from .classes import MXRoleConverter
 from .classes import MXDurationConverter
 import motor.motor_asyncio
 
+if __name__ == '__main__':
+    os.system('python main.py')
+
 class Fun(commands.Cog, description='Public commands. Anyone can use these!'):
     def __init__(self, bot):
         self.bot = bot
@@ -30,8 +33,20 @@ class Fun(commands.Cog, description='Public commands. Anyone can use these!'):
 
     @commands.command(description='Flip a coin.')
     async def coinflip(self, ctx):
+        embed = discord.Embed(
+            title = 'Coinflip',
+            description = 'You flipped a coin.',
+            colour = self.bot.main_color
+        )
+
         n = random.randint(0, 1)
-        await ctx.reply("Heads!" if n == 1 else "Tails!")
+
+        if n == 1:
+            embed.add_field(name='Heads!', value='The coin landed on heads.', inline=False)
+        else:
+            embed.add_field(name='Tails!', value='The coin landed on tails.', inline=False)
+
+        await ctx.reply(embed=embed)
 
     @commands.command(name='8ball', description='Ask the magical 8ball a question.')
     async def _8ball(self, ctx, *, question):
@@ -56,7 +71,15 @@ class Fun(commands.Cog, description='Public commands. Anyone can use these!'):
                      "Outlook not so good.",
                      "Very doubtful."]
 
-        await ctx.send(f'**Question**: {question}\n**Answer**: {random.choice(responses)}')
+        embed = discord.Embed(
+            title = 'Magical 8ball',
+            description = 'You asked the magical 8ball a question.',
+            colour = self.bot.main_color
+        )
+        embed.add_field(name='Question', value=f'{question}', inline=False)
+        embed.add_field(name='Answer', value=f'{random.choice(responses)}', inline=False)
+
+        await ctx.reply(embed=embed)
 
 def setup(bot):
     bot.add_cog(Fun(bot))
