@@ -98,17 +98,22 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
         embed.set_author(name=f'{member}', icon_url=f'{member.avatar_url}')
         embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
-        embed.add_field(name='User', value=f'{member.mention}', inline=True)
+        embed.add_field(name='User', value=f'{member.mention}', inline=False)
         embed.add_field(name='ID', value=f'{member.id}', inline=False)
-        embed.add_field(name='Bot', value=f'{member.bot}', inline=True)
-        embed.add_field(name='Top Role', value=f'{member.top_role.mention}', inline=True)
-        embed.add_field(name='Status', value=f'{member.status}', inline=True)
-        embed.add_field(name='Activity', value=f'{member.activity.name}', inline=True)
+        embed.add_field(name='Bot', value=f'{member.bot}', inline=False)
+        embed.add_field(name='Top Role', value=f'{member.top_role.mention}', inline=False)
+        embed.add_field(name='Status', value=f'{member.status}', inline=False)
+
+        try:
+            embed.add_field(name='Activity', value=f'{member.activity.name}', inline=False)
+        except:
+            embed.add_field(name='Activity', value='None', inline=False)
+
         embed.add_field(name='Created At', value=f'{member.created_at.strftime("%m/%d/%Y %H:%M:%S")}', inline=False)
         embed.add_field(name='Joined At', value=f'{member.joined_at.strftime("%m/%d/%Y %H:%M:%S")}', inline=False)
-        embed.add_field(name='Boosted', value=bool(member.premium_since), inline=True)
+        embed.add_field(name='Boosted', value=bool(member.premium_since), inline=False)
 
-        if member.activity.name == 'Spotify':
+        if member.activity and member.activity.name == 'Spotify':
             await message.edit(embed=embed, components=[Button(label='More Info!', style=ButtonStyle.green, custom_id='SpotifyButton')])
 
             interaction = await self.bot.wait_for("button_click", check=lambda i: i.component.label.startswith('More'))
@@ -154,26 +159,36 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
         embed.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon_url}')
         embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
-        embed.add_field(name='Guild', value=f'{ctx.guild.name}', inline=True)
-        embed.add_field(name='Region', value=f'{ctx.guild.region}', inline=True)
+        embed.add_field(name='Guild', value=f'{ctx.guild.name}', inline=False)
+        embed.add_field(name='Region', value=f'{ctx.guild.region}', inline=False)
         embed.add_field(name='ID', value=f'{ctx.guild.id}', inline=False)
         embed.add_field(name='Created At', value=f'{ctx.guild.created_at.strftime("%m/%d/%Y %H:%M:%S")}', inline=False)
-        embed.add_field(name='Members', value=len(ctx.guild.members), inline=True)
-        embed.add_field(name='Humans', value=len(list(filter(lambda m: not m.bot, ctx.guild.members))), inline=True)
-        embed.add_field(name='Bots', value=len(list(filter(lambda m: m.bot, ctx.guild.members))), inline=True)
-        embed.add_field(name='Ban Count', value=len(await ctx.guild.bans()), inline=True)
+        embed.add_field(name='Members', value=len(ctx.guild.members), inline=False)
+        embed.add_field(name='Humans', value=len(list(filter(lambda m: not m.bot, ctx.guild.members))), inline=False)
+        embed.add_field(name='Bots', value=len(list(filter(lambda m: m.bot, ctx.guild.members))), inline=False)
+        embed.add_field(name='Ban Count', value=len(await ctx.guild.bans()), inline=False)
         embed.add_field(name='Statuses', value=f"🟢 {statuses[0]} 🟠 {statuses[1]} 🔴 {statuses[2]} ⚪ {statuses[3]}", inline=False)
-        embed.add_field(name='Text Channels', value=len(ctx.guild.text_channels), inline=True)
-        embed.add_field(name='Voice Channels', value=len(ctx.guild.voice_channels), inline=True)
-        embed.add_field(name='Categories', value=len(ctx.guild.categories), inline=True)
-        embed.add_field(name='Roles', value=len(ctx.guild.roles), inline=True)
-        embed.add_field(name='Invites', value=len(await ctx.guild.invites()), inline=True)
+        embed.add_field(name='Text Channels', value=len(ctx.guild.text_channels), inline=False)
+        embed.add_field(name='Voice Channels', value=len(ctx.guild.voice_channels), inline=False)
+        embed.add_field(name='Categories', value=len(ctx.guild.categories), inline=False)
+        embed.add_field(name='Roles', value=len(ctx.guild.roles), inline=False)
+        embed.add_field(name='Invites', value=len(await ctx.guild.invites()), inline=False)
+        embed.add_field(name='Boost Count', value=f'{ctx.guild.premium_subscription_count}', inline=False)
+        embed.add_field(name='Boost Tier', value=f'Level {ctx.guild.premium_tier}')
 
         await message.edit(embed=embed)
 
-    @commands.command(description='Check the bots latency.')
+    @commands.command(description='Check the bots latency status.')
     async def ping(self, ctx):
-        await ctx.reply(f'**Pong**! {round(self.bot.latency * 1000)}ms')
+        latency = round(self.bot.latency * 1000)
+
+        embed = discord.Embed(
+            colour = self.bot.utils_color,
+            title = 'Pong!',
+            description = f'{latency}ms'
+        )
+
+        await ctx.reply(embed=embed)
 
     @commands.command(description='Send a guild message to members in a role.')
     @commands.has_permissions(mention_everyone=True)
@@ -190,7 +205,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
             colour = self.bot.utils_color
         )
 
-        embed.set_footer(text=f'Invoked by {ctx.author.name}, for {Role}')
+        embed.set_footer(text=f'Invoked by {ctx.author}, for {Role}')
         embed.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon_url}')
         embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
 
@@ -208,11 +223,11 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
             description = 'This task was completed without any errors.'
         )
         embed.timestamp = datetime.datetime.utcnow()
-        embed.add_field(name='Total', value=f'{total}', inline=True)
-        embed.add_field(name='Success', value=f'{success}', inline=True)
-        embed.add_field(name='Failed', value=f'{fail}', inline=True)
+        embed.add_field(name='Total Messages', value=f'{total}', inline=True)
+        embed.add_field(name='Sent Messages', value=f'{success}', inline=True)
+        embed.add_field(name='Blocked Messages', value=f'{fail}', inline=True)
         embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
-        embed.set_footer(text=f'Invoked by {ctx.author.name}, for {Role}')
+        embed.set_footer(text=f'Invoked by {ctx.author}, for {Role}')
 
         await message.edit(embed=embed)
 
@@ -224,7 +239,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
             description = 'Before you invite the bot, please take a few moments to read the field below.'
         )
         embed.timestamp = datetime.datetime.utcnow()
-        embed.add_field(name='Thank you!', value=f"This bot is a project I made for myself and I'm glad you want to invite it to your server, it means the world. This bot has been improving at the same rate as my skillset. Each new skill I learn, I try and add it to the bot. Once again. Thanks.", inline=True)
+        embed.add_field(name='Thank you!', value=f"This bot is a project I made for myself and I'm glad you want to invite it to your server, it means the world. This bot has been improving at the same rate as my skillset. Each new skill I learn, I try and apply it to the bot. Once again. Thanks. Enjoy!", inline=True)
         embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
 
