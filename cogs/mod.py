@@ -264,11 +264,11 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
                 send_messages=True
             )
 
-        await channel.edit(overwrites=overwrites, reason=f'Locked channel {channel.name}.')
+        await channel.edit(overwrites=overwrites, reason=f'Unlocked channel {channel.name}.')
 
         await message.edit(content=f'Successfully unlocked {channel.mention}. Refer to the lock command to lock this channel.')
 
-    @commands.command(description='Give a member a role./Take away a members role.')
+    @commands.group(description='Give a member a role./Take away a members role.', invoke_without_command=True)
     @commands.has_permissions(manage_roles=True)
     async def role(self, ctx, member : commands.MemberConverter, *, role : MXRoleConverter):
         if role in member.roles:
@@ -277,6 +277,32 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
         else:
             await member.add_roles(role)
             await ctx.reply(f'Gave `{role.name}` to `{member.name}`.')
+
+    @role.command(description='Give a member a role./Take away a members role.')
+    @commands.has_permissions(manage_roles=True)
+    async def all(self, ctx, role : MXRoleConverter):
+        msg = await ctx.reply('Working...  (This may take a while depending on your server size.)')
+
+        for member in ctx.guild.members:
+            try:
+                await member.add_roles(role)
+            except:
+                pass
+
+        await msg.edit(content='Complete!')
+
+    @role.command(name='in', description='Give a member a role./Take away a members role.')
+    @commands.has_permissions(manage_roles=True)
+    async def _in(self, ctx, role1 : commands.RoleConverter, role2 : commands.RoleConverter):
+        msg = await ctx.reply('Working...  (This may take a while depending on the amount of members in the role.)')
+
+        for member in role1.members:
+            try:
+                await member.add_roles(role2)
+            except:
+                pass
+
+        await msg.edit(content='Complete!')
 
     @commands.command(description='Set a logging channel. Logs will not be saved if a channel is not set.')
     @commands.has_permissions(manage_guild=True)

@@ -195,9 +195,9 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
     async def msgrole(self, ctx, Role : discord.Role, *, input):
         message = await ctx.reply('Working...')
 
+        total = 0
         success = 0
         fail = 0
-        total = 0
 
         embed = discord.Embed(
             title = 'Guild Mail',
