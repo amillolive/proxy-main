@@ -278,7 +278,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
             await member.add_roles(role)
             await ctx.reply(f'Gave `{role.name}` to `{member.name}`.')
 
-    @role.command(description='Give a member a role./Take away a members role.')
+    @role.command(description='Give everyone in the guild a role.')
     @commands.has_permissions(manage_roles=True)
     async def all(self, ctx, role : MXRoleConverter):
         msg = await ctx.reply('Working...  (This may take a while depending on your server size.)')
@@ -291,7 +291,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         await msg.edit(content='Complete!')
 
-    @role.command(name='in', description='Give a member a role./Take away a members role.')
+    @role.command(name='in', description='Give members in a role another role.')
     @commands.has_permissions(manage_roles=True)
     async def _in(self, ctx, role1 : commands.RoleConverter, role2 : commands.RoleConverter):
         msg = await ctx.reply('Working...  (This may take a while depending on the amount of members in the role.)')
@@ -304,9 +304,14 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         await msg.edit(content='Complete!')
 
-    @commands.command(description='Set a logging channel. Logs will not be saved if a channel is not set.')
+    @commands.group(description='Root command for log management.', invoke_without_command=True)
     @commands.has_permissions(manage_guild=True)
-    async def logchannel(self, ctx, channel : commands.TextChannelConverter):
+    async def log(self, ctx):
+        pass
+
+    @log.command(description='Set a logging channel. Logs will not be saved if a channel is not set.')
+    @commands.has_permissions(manage_guild=True)
+    async def set(self, ctx, channel : commands.TextChannelConverter):
         data = await self.bot.log_channels.find(ctx.guild.id)
 
         if not data or "channel" not in data:
@@ -317,11 +322,11 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
             data["channel"] = channel.id
             await self.bot.log_channels.upsert(data)
 
-        await ctx.reply(f'Congrats! I am now able to log all events to {channel.mention}! If you wish to disable logging refer to the command in the help command.')
+        await ctx.reply(f'Congrats! I am now able to log all events to {channel.mention}! If you wish to disable logging refer to the `disable` subcommand in the help command.')
 
-    @commands.command(description='Remove logging from the guild.')
+    @log.command(description='Remove logging from the guild.')
     @commands.has_permissions(manage_guild=True)
-    async def disablelogging(self, ctx):
+    async def disable(self, ctx):
         data = await self.bot.log_channels.find(ctx.guild.id)
 
         if not data or "channel" not in data:
@@ -329,7 +334,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         else:
             await self.bot.log_channels.delete(data)
-            await ctx.reply('Logging has been disabled.')
+            await ctx.reply('Logging has been disabled. If you ever wish to re-enable it you can refer to the `set` subcommand in the help command.')
 
 def setup(bot):
     bot.add_cog(Mod(bot))

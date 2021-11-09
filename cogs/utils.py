@@ -195,6 +195,8 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
     async def msgrole(self, ctx, Role : discord.Role, *, input):
         message = await ctx.reply('Working...')
 
+        start_time = datetime.datetime.now()
+
         total = 0
         success = 0
         fail = 0
@@ -217,6 +219,10 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
             except:
                 fail += 1
 
+        end_time = datetime.datetime.now()
+
+        time = round((end_time - start_time).total_seconds(), 2)
+
         embed = discord.Embed(
             title = 'Task Completed',
             colour = self.bot.utils_color,
@@ -226,6 +232,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         embed.add_field(name='Total Messages', value=f'{total}', inline=True)
         embed.add_field(name='Sent Messages', value=f'{success}', inline=True)
         embed.add_field(name='Blocked Messages', value=f'{fail}', inline=True)
+        embed.add_field(name='Duration', value=f'{time}s', inline=True)
         embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
         embed.set_footer(text=f'Invoked by {ctx.author}, for {Role}')
 

@@ -31,8 +31,9 @@ class Events(commands.Cog, description='Events. These are all the events that ha
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
-        if message.author.id == self.bot.user.id:
-            return
+        for id in self.bot.bot_ids:
+            if message.author.id == id:
+                return
 
         data = await self.bot.log_channels.find(message.guild.id)
 
@@ -69,6 +70,7 @@ class Events(commands.Cog, description='Events. These are all the events that ha
             user_agent="paradex"
         )
         print('Successful connection to Reddit.')
+        print(f'Version: {self.bot.version}')
         print('------')
 
     @commands.Cog.listener()
@@ -88,8 +90,9 @@ class Events(commands.Cog, description='Events. These are all the events that ha
 
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):
-        if after.author.id == self.bot.user.id:
-            return
+        for id in self.bot.bot_ids:
+            if after.author.id == id:
+                return
 
         data = await self.bot.log_channels.find(before.guild.id)
 
