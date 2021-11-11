@@ -10,3 +10,5 @@ motor
 dnspython
 python-dotenv
 discord-components
+discord-slash-components-bridge
+dpy-slash-button-paginator
