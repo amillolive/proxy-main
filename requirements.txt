@@ -1,4 +1,4 @@
-discord.py[voice]
+discord.py
 git+https://github.com/LiBa001/disputils
 PyNaCl
 pandas
