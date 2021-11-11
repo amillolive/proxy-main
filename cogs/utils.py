@@ -20,7 +20,6 @@ from .classes import MXDurationConverter
 import motor.motor_asyncio
 from discord_components import *
 from discord import Spotify
-from dinteractions_Paginator import Paginator
 
 if __name__ == '__main__':
     os.system('python main.py')
@@ -80,7 +79,8 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         if not embeds:
             embeds.append(current)
 
-        await Paginator(bot=self.bot, ctx=ctx, pages=embeds, timeout=300).run()
+        paginator = BotEmbedPaginator(ctx, embeds)
+        await paginator.run()
 
     @commands.command(aliases=['whois'], description='Get info about a user.')
     async def userinfo(self, ctx, member : commands.MemberConverter = None):
