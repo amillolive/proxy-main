@@ -12,4 +12,4 @@ python-dotenv
 discord-components
 discord-py-slash-command
 discord-slash-components-bridge
-dpy-slash-button-paginator
+git+https://github.com/catalyst4222/ButtonPaginator
