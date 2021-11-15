@@ -8,5 +8,4 @@ discordmongopy
 motor
 dnspython
 python-dotenv
-discord-components
 PycordUtils
