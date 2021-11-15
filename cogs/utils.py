@@ -170,7 +170,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
                 await message.edit(embed=embed, view=SpotifyView(ctx, member))
                 return
 
-        await ctx.send(embed=embed)
+        await ctx.respond(embed=embed)
 
     @commands.command(description='Get info about a server.')
     async def serverinfo(self, ctx):
@@ -252,7 +252,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         embed.add_field(name='Boost Count', value=f'{ctx.guild.premium_subscription_count}', inline=False)
         embed.add_field(name='Boost Tier', value=f'Level {ctx.guild.premium_tier}')
 
-        await ctx.send(embed=embed)
+        await ctx.respond(embed=embed)
 
     @commands.command(description='Check the bots latency status.')
     async def ping(self, ctx):
@@ -276,7 +276,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
             description = f'{latency}ms'
         )
 
-        await ctx.send(embed=embed)
+        await ctx.respond(embed=embed)
 
     @commands.command(description='Send a guild message to members in a role.')
     @commands.has_permissions(mention_everyone=True)
@@ -357,7 +357,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
 
-        await ctx.send(embed=embed, view=InviteView())
+        await ctx.respond(embed=embed, view=InviteView())
 
 def setup(bot):
     bot.add_cog(Utils(bot))

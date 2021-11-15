@@ -68,7 +68,7 @@ class Reddit(commands.Cog, description='Public commands. Anyone can use these!')
         embed.add_field(name='Author', value=f'{submission.author}', inline=True)
         embed.add_field(name='Upvotes', value=f'{submission.score}')
 
-        await ctx.send(embed=embed)
+        await ctx.respond(embed=embed)
 
     @commands.command(description='Get a dog from reddit.')
     async def dogs(self, ctx):
@@ -108,7 +108,7 @@ class Reddit(commands.Cog, description='Public commands. Anyone can use these!')
         embed.add_field(name='Author', value=f'{submission.author}', inline=True)
         embed.add_field(name='Upvotes', value=f'{submission.score}')
 
-        await ctx.send(embed=embed)
+        await ctx.respond(embed=embed)
 
     @commands.command(description='Get a gaming setup from reddit.')
     async def gamingsetup(self, ctx):
@@ -148,7 +148,7 @@ class Reddit(commands.Cog, description='Public commands. Anyone can use these!')
         embed.add_field(name='Author', value=f'{submission.author}', inline=True)
         embed.add_field(name='Upvotes', value=f'{submission.score}')
 
-        await ctx.send(embed=embed)
+        await ctx.respond(embed=embed)
 
 def setup(bot):
     bot.add_cog(Reddit(bot))

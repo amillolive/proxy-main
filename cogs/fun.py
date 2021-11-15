@@ -36,7 +36,7 @@ class Fun(commands.Cog, description='Public commands. Anyone can use these!'):
 
     @slash_command(name='echo', description='Have the bot repeat what you say.')
     async def _echo(self, ctx, *, message : commands.clean_content):
-        await ctx.send(message)
+        await ctx.respond(message)
 
     @commands.command(description='Flip a coin.')
     async def coinflip(self, ctx):
@@ -70,7 +70,7 @@ class Fun(commands.Cog, description='Public commands. Anyone can use these!'):
         else:
             embed.add_field(name='Tails!', value='The coin landed on tails.', inline=False)
 
-        await ctx.reply(embed=embed)
+        await ctx.respond(embed=embed)
 
     @commands.command(name='8ball', description='Ask the magical 8ball a question.')
     async def _8ball(self, ctx, *, question):
@@ -136,7 +136,7 @@ class Fun(commands.Cog, description='Public commands. Anyone can use these!'):
         embed.add_field(name='Question', value=f'{question}', inline=False)
         embed.add_field(name='Answer', value=f'{random.choice(responses)}', inline=False)
 
-        await ctx.send(embed=embed)
+        await ctx.respond(embed=embed)
 
 def setup(bot):
     bot.add_cog(Fun(bot))
