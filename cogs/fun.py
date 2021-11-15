@@ -34,8 +34,8 @@ class Fun(commands.Cog, description='Public commands. Anyone can use these!'):
     async def echo(self, ctx, *, message : commands.clean_content):
         await ctx.reply(message)
 
-    @slash_command(description='Have the bot repeat what you say.')
-    async def echo(self, ctx, *, message : commands.clean_content):
+    @slash_command(name='echo', description='Have the bot repeat what you say.')
+    async def _echo(self, ctx, *, message : commands.clean_content):
         await ctx.send(message)
 
     @commands.command(description='Flip a coin.')
@@ -55,8 +55,8 @@ class Fun(commands.Cog, description='Public commands. Anyone can use these!'):
 
         await ctx.reply(embed=embed)
 
-    @slash_command(description='Flip a coin.')
-    async def coinflip(self, ctx):
+    @slash_command(name='coinflip', description='Flip a coin.')
+    async def _coinflip(self, ctx):
         embed = discord.Embed(
             title = 'Coinflip',
             description = 'You flipped a coin.',
@@ -106,7 +106,7 @@ class Fun(commands.Cog, description='Public commands. Anyone can use these!'):
         await ctx.reply(embed=embed)
 
     @slash_command(name='8ball', description='Ask the magical 8ball a question.')
-    async def _8ball(self, ctx, *, question):
+    async def _ball(self, ctx, *, question):
         responses = ["It is certain.",
                      "It is decidedly so.",
                      "Without a doubt.",

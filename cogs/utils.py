@@ -136,8 +136,8 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
 
         await message.edit(embed=embed)
 
-    @slash_command(description='Get info about a user.')
-    async def userinfo(self, ctx, member : commands.MemberConverter = None):
+    @slash_command(name='userinfo', description='Get info about a user.')
+    async def _userinfo(self, ctx, member : commands.MemberConverter = None):
         if member is None:
             member = ctx.author
 
@@ -214,8 +214,8 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
 
         await message.edit(embed=embed)
 
-    @slash_command(description='Get info about a server.')
-    async def serverinfo(self, ctx):
+    @slash_command(name='serverinfo', description='Get info about a server.')
+    async def _serverinfo(self, ctx):
         statuses = [len(list(filter(lambda m: f'{m.status}' == "online", ctx.guild.members))),
                     len(list(filter(lambda m: f'{m.status}' == "idle", ctx.guild.members))),
                     len(list(filter(lambda m: f'{m.status}' == "dnd", ctx.guild.members))),
@@ -266,8 +266,8 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
 
         await ctx.reply(embed=embed)
 
-    @slash_command(description='Check the bots latency status.')
-    async def ping(self, ctx):
+    @slash_command(name='ping', description='Check the bots latency status.')
+    async def _ping(self, ctx):
         latency = round(self.bot.latency * 1000)
 
         embed = discord.Embed(
@@ -345,8 +345,8 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
 
         await ctx.send(embed=embed, view=InviteView())
 
-    @slash_command(description='Invite the bot!')
-    async def invite(self, ctx):
+    @slash_command(name='invite', description='Invite the bot!')
+    async def _invite(self, ctx):
         embed = discord.Embed(
             title = 'Link Generated.',
             colour = self.bot.utils_color,

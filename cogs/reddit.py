@@ -51,8 +51,8 @@ class Reddit(commands.Cog, description='Public commands. Anyone can use these!')
 
         await message.edit(embed=embed)
 
-    @slash_command(description='Get a meme from reddit.')
-    async def meme(self, ctx):
+    @slash_command(name='meme', description='Get a meme from reddit.')
+    async def _meme(self, ctx):
         subreddit = await self.bot.reddit_task.subreddit("memes")
         submission = random.choice([submission async for submission in subreddit.hot(limit=50)])
 
@@ -91,8 +91,8 @@ class Reddit(commands.Cog, description='Public commands. Anyone can use these!')
 
         await message.edit(embed=embed)
 
-    @slash_command(description='Get a dog from reddit.')
-    async def dogs(self, ctx):
+    @slash_command(name='dogs', description='Get a dog from reddit.')
+    async def _dogs(self, ctx):
         subreddit = await self.bot.reddit_task.subreddit("rarepuppers")
         submission = random.choice([submission async for submission in subreddit.hot(limit=50)])
 
@@ -131,8 +131,8 @@ class Reddit(commands.Cog, description='Public commands. Anyone can use these!')
 
         await message.edit(embed=embed)
 
-    @slash_command(description='Get a gaming setup from reddit.')
-    async def gamingsetup(self, ctx):
+    @slash_command(name='gamingsetup', description='Get a gaming setup from reddit.')
+    async def _gamingsetup(self, ctx):
         subreddit = await self.bot.reddit_task.subreddit("battlestations")
         submission = random.choice([submission async for submission in subreddit.hot(limit=50)])
 
