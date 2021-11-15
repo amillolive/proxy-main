@@ -2,24 +2,24 @@ import asyncio
 import asyncpraw
 from asyncpraw import Reddit
 import discord
-from discord_components.client import DiscordComponents
-import disputils
 import json
 import random
 from discord.ext import commands, tasks
+from discord.commands import slash_command
 from itertools import cycle
 from discord.utils import get
 import typing
 import datetime
-from disputils import BotEmbedPaginator
 import os
 import traceback
 import sys
 import discordmongo
+import motor.motor_asyncio
+from discord import Spotify
+import PycordUtils
+from dotenv import load_dotenv
 from .classes import MXRoleConverter
 from .classes import MXDurationConverter
-import motor.motor_asyncio
-from discord_components import *
 
 if __name__ == '__main__':
     os.system('python main.py')
@@ -49,9 +49,12 @@ class Events(commands.Cog, description='Events. These are all the events that ha
             colour = self.bot.logging_color
         )
         embed.timestamp = datetime.datetime.utcnow()
-        embed.set_author(name=f'{message.author}', icon_url=f'{message.author.avatar_url}')
+        embed.set_author(name=f'{message.author}', icon_url=f'{message.author.display_avatar.url}')
         embed.set_footer(text='Event logging.')
-        embed.set_thumbnail(url=f'{channel.guild.icon_url}')
+
+        if channel.guild.icon:
+            embed.set_thumbnail(url=f'{channel.guild.icon.url}')
+
         embed.add_field(name='User', value=f'{message.author.mention}', inline=True)
         embed.add_field(name='Message', value=f'{message.content}', inline=True)
 
@@ -61,7 +64,6 @@ class Events(commands.Cog, description='Events. These are all the events that ha
     async def on_ready(self):
         print('------')
         self.bot.presence_update.start(self.bot)
-        DiscordComponents(self.bot)
         print(f'Logged in as: {self.bot.user.name}')
         print('Succesful connection to MongoDB.')
         self.bot.reddit_task = asyncpraw.Reddit(
@@ -81,9 +83,9 @@ class Events(commands.Cog, description='Events. These are all the events that ha
             colour = self.bot.error_color
         )
         embed.timestamp = datetime.datetime.utcnow()
-        embed.set_author(name=f'{ctx.author}', icon_url=f'{ctx.author.avatar_url}')
+        embed.set_author(name=f'{ctx.author}', icon_url=f'{ctx.author.display_avatar.url}')
         embed.set_footer(text='Error Log.')
-        embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
+        embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
         embed.add_field(name='Error', value=f'{error}', inline=False)
         await ctx.reply(embed=embed)
         raise error
@@ -108,9 +110,12 @@ class Events(commands.Cog, description='Events. These are all the events that ha
             colour = self.bot.logging_color
         )
         embed.timestamp = datetime.datetime.utcnow()
-        embed.set_author(name=f'{before.author}', icon_url=f'{before.author.avatar_url}')
+        embed.set_author(name=f'{before.author}', icon_url=f'{before.author.display_avatar.url}')
         embed.set_footer(text='Event logging.')
-        embed.set_thumbnail(url=f'{channel.guild.icon_url}')
+
+        if channel.guild.icon:
+            embed.set_thumbnail(url=f'{channel.guild.icon.url}')
+
         embed.add_field(name='Before', value=f'{before.content}', inline=True)
         embed.add_field(name='After', value=f'{after.content}', inline=True)
         embed.add_field(name='ID', value=f'{after.id}', inline=True)
@@ -133,9 +138,12 @@ class Events(commands.Cog, description='Events. These are all the events that ha
             colour = self.bot.logging_color
         )
         embed.timestamp = datetime.datetime.utcnow()
-        embed.set_author(name=f'{role}', icon_url=f'{self.bot.user.avatar_url}')
+        embed.set_author(name=f'{role}', icon_url=f'{self.bot.user.display_avatar.url}')
         embed.set_footer(text='Event logging.')
-        embed.set_thumbnail(url=f'{channel.guild.icon_url}')
+
+        if channel.guild.icon:
+            embed.set_thumbnail(url=f'{channel.guild.icon.url}')
+
         embed.add_field(name='Role', value=f'{role.name}', inline=True)
         embed.add_field(name='ID', value=f'{role.id}', inline=True)
 
@@ -157,9 +165,12 @@ class Events(commands.Cog, description='Events. These are all the events that ha
             colour = self.bot.logging_color
         )
         embed.timestamp = datetime.datetime.utcnow()
-        embed.set_author(name=f'{role}', icon_url=f'{self.bot.user.avatar_url}')
+        embed.set_author(name=f'{role}', icon_url=f'{self.bot.user.display_avatar.url}')
         embed.set_footer(text='Event logging.')
-        embed.set_thumbnail(url=f'{channel.guild.icon_url}')
+
+        if channel.guild.icon:
+            embed.set_thumbnail(url=f'{channel.guild.icon.url}')
+
         embed.add_field(name='Role', value=f'{role.name}', inline=True)
         embed.add_field(name='ID', value=f'{role.id}', inline=True)
 
@@ -181,9 +192,12 @@ class Events(commands.Cog, description='Events. These are all the events that ha
             colour = self.bot.logging_color
         )
         embed.timestamp = datetime.datetime.utcnow()
-        embed.set_author(name=f'{after}', icon_url=f'{self.bot.user.avatar_url}')
+        embed.set_author(name=f'{after}', icon_url=f'{self.bot.user.display_avatar.url}')
         embed.set_footer(text='Event logging.')
-        embed.set_thumbnail(url=f'{channel.guild.icon_url}')
+
+        if channel.guild.icon:
+            embed.set_thumbnail(url=f'{channel.guild.icon.url}')
+
         embed.add_field(name='Before', value=f'{before.mention}', inline=True)
         embed.add_field(name='After', value=f'{after.mention}', inline=True)
         embed.add_field(name='ID', value=f'{after.id}', inline=True)
@@ -206,9 +220,12 @@ class Events(commands.Cog, description='Events. These are all the events that ha
             colour = self.bot.logging_color
         )
         embed.timestamp = datetime.datetime.utcnow()
-        embed.set_author(name=f'{user}', icon_url=f'{user.avatar_url}')
+        embed.set_author(name=f'{user}', icon_url=f'{user.display_avatar.url}')
         embed.set_footer(text='Event logging.')
-        embed.set_thumbnail(url=f'{guild.icon_url}')
+
+        if guild.icon:
+            embed.set_thumbnail(url=f'{guild.icon.url}')
+
         embed.add_field(name='User', value=f'{user.mention}', inline=True)
         embed.add_field(name='ID', value=f'{user.id}', inline=True)
 
@@ -230,9 +247,12 @@ class Events(commands.Cog, description='Events. These are all the events that ha
             colour = self.bot.logging_color
         )
         embed.timestamp = datetime.datetime.utcnow()
-        embed.set_author(name=f'{user}', icon_url=f'{user.avatar_url}')
+        embed.set_author(name=f'{user}', icon_url=f'{user.display_avatar.url}')
         embed.set_footer(text='Event logging.')
-        embed.set_thumbnail(url=f'{guild.icon_url}')
+
+        if guild.icon:
+            embed.set_thumbnail(url=f'{guild.icon.url}')
+
         embed.add_field(name='User', value=f'{user.mention}', inline=True)
         embed.add_field(name='ID', value=f'{user.id}', inline=True)
 

@@ -2,23 +2,24 @@ import asyncio
 import asyncpraw
 from asyncpraw import Reddit
 import discord
-import disputils
 import json
 import random
 from discord.ext import commands, tasks
+from discord.commands import slash_command
 from itertools import cycle
 from discord.utils import get
 import typing
 import datetime
-from disputils import BotEmbedPaginator
 import os
 import traceback
 import sys
 import discordmongo
+import motor.motor_asyncio
+from discord import Spotify
+import PycordUtils
+from dotenv import load_dotenv
 from .classes import MXRoleConverter
 from .classes import MXDurationConverter
-import motor.motor_asyncio
-from discord_components import *
 
 if __name__ == '__main__':
     os.system('python main.py')
@@ -61,9 +62,12 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
             colour = self.bot.mod_color
         )
         embed.timestamp = datetime.datetime.utcnow()
-        embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.avatar_url}')
+        embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.display_avatar.url}')
         embed.set_footer(text='Invoked by {ctx.author.name}')
-        embed.set_thumbnail(url=f'{ctx.guild.icon_url}')
+
+        if ctx.guild.icon:
+            embed.set_thumbnail(url=f'{ctx.guild.icon.url}')
+
         embed.add_field(name='Member', value=f'{member}', inline=True)
         embed.add_field(name='Reason', value=f'{reason}', inline=True)
 
@@ -92,9 +96,12 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
             colour = self.bot.mod_color
         )
         embed.timestamp = datetime.datetime.utcnow()
-        embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.avatar_url}')
+        embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.display_avatar.url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
-        embed.set_thumbnail(url=f'{ctx.guild.icon_url}')
+
+        if ctx.guild.icon:
+            embed.set_thumbnail(url=f'{ctx.guild.icon.url}')
+
         embed.add_field(name='Member', value=f'{member}', inline=True)
         embed.add_field(name='Duration', value=f'{amount}{unit}', inline=True)
 
@@ -122,9 +129,12 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
             colour = self.bot.mod_color
         )
         embed.timestamp = datetime.datetime.utcnow()
-        embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.avatar_url}')
+        embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.display_avatar.url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
-        embed.set_thumbnail(url=f'{ctx.guild.icon_url}')
+
+        if ctx.guild.icon:
+            embed.set_thumbnail(url=f'{ctx.guild.icon.url}')
+
         embed.add_field(name='Member', value=f'{member}', inline=True)
         embed.add_field(name='Reason', value=f'{reason}', inline=True)
 
@@ -147,9 +157,12 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
             colour = self.bot.mod_color
         )
         embed.timestamp = datetime.datetime.utcnow()
-        embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.avatar_url}')
+        embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.display_avatar.url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
-        embed.set_thumbnail(url=f'{ctx.guild.icon_url}')
+
+        if ctx.guild.icon:
+            embed.set_thumbnail(url=f'{ctx.guild.icon.url}')
+
         embed.add_field(name='Member', value=f'{member}', inline=True)
         embed.add_field(name='Reason', value=f'{reason}', inline=True)
 
@@ -166,9 +179,12 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
             colour = self.bot.mod_color
         )
         embed.timestamp = datetime.datetime.utcnow()
-        embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.avatar_url}')
+        embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.display_avatar.url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
-        embed.set_thumbnail(url=f'{ctx.guild.icon_url}')
+
+        if ctx.guild.icon:
+            embed.set_thumbnail(url=f'{ctx.guild.icon.url}')
+
         embed.add_field(name='Member', value=f'{member}', inline=True)
         embed.add_field(name='Reason', value=f'{reason}', inline=True)
 
@@ -188,9 +204,12 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
             colour = self.bot.mod_color
         )
         embed.timestamp = datetime.datetime.utcnow()
-        embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.avatar_url}')
+        embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.display_avatar.url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
-        embed.set_thumbnail(url=f'{ctx.guild.icon_url}')
+
+        if ctx.guild.icon:
+            embed.set_thumbnail(url=f'{ctx.guild.icon.url}')
+
         embed.add_field(name='Member', value=f'{member}', inline=True)
         embed.add_field(name='Duration', value=f'{amount}{unit}', inline=True)
 
@@ -209,9 +228,12 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
             colour = self.bot.mod_color
         )
         embed.timestamp = datetime.datetime.utcnow()
-        embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.avatar_url}')
+        embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.display_avatar.url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
-        embed.set_thumbnail(url=f'{ctx.guild.icon_url}')
+
+        if ctx.guild.icon:
+            embed.set_thumbnail(url=f'{ctx.guild.icon.url}')
+
         embed.add_field(name='Member', value=f'{member}', inline=True)
         embed.add_field(name='Reason', value=f'{reason}', inline=True)
 

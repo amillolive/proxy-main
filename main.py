@@ -1,25 +1,23 @@
-# Imports
-
 import asyncio
 import asyncpraw
 from asyncpraw import Reddit
 import discord
-import disputils
 import json
 import random
 from discord.ext import commands, tasks
+from discord.commands import slash_command
 from itertools import cycle
 from discord.utils import get
 import typing
 import datetime
-from disputils import BotEmbedPaginator
 import os
 import traceback
 import sys
 import discordmongo
 import motor.motor_asyncio
+from discord import Spotify
+import PycordUtils
 from dotenv import load_dotenv
-from discord_components import *
 
 # Help Command Subclass
 
@@ -54,7 +52,7 @@ bot = commands.Bot(command_prefix = get_prefix, intents=intents, case_insensitiv
 load_dotenv(dotenv_path="./.env")
 
 bot.prefix = os.getenv('PREFIX')
-bot.version = '11.9.21'
+bot.version = '11.15.21'
 bot.help_command = ModifiedMinimalHelpCommand()
 bot.invite_link = os.getenv('INVITE_LINK')
 bot.bot_ids = [872558551573348392, 678863504991584256]
@@ -70,7 +68,7 @@ bot.log_channels = discordmongo.Mongo(connection_url=bot.db_log, dbname="Log_Cha
 bot.mute_roles = discordmongo.Mongo(connection_url=bot.db_log, dbname="Mute_Roles")
 
 bot.main_color = discord.Colour.blue()
-bot.utils_color = discord.Colour.blurple()
+bot.utils_color = discord.Colour.og_blurple()
 bot.logging_color = discord.Colour.red()
 bot.mod_color = discord.Colour.dark_red()
 bot.api_color = discord.Colour.orange()

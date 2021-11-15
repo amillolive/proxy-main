@@ -2,24 +2,25 @@ import asyncio
 import asyncpraw
 from asyncpraw import Reddit
 import discord
-import disputils
 import json
 import random
 from discord.ext import commands, tasks
+from discord.commands import slash_command
 from itertools import cycle
 from discord.utils import get
 import typing
 import datetime
-from disputils import BotEmbedPaginator
 import os
 import traceback
 import sys
 import discordmongo
+import motor.motor_asyncio
+from discord import Spotify
+import PycordUtils
+from dotenv import load_dotenv
 from .classes import MXRoleConverter
 from .classes import MXDurationConverter
-import motor.motor_asyncio
-from discord_components import *
-from discord import Spotify
+from .views.views import InviteView, SpotifyView
 
 if __name__ == '__main__':
     os.system('python main.py')
@@ -40,10 +41,15 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
             description = 'This task was completed successfully',
             colour = self.bot.utils_color
         )
-        current.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon_url}')
+
+        if ctx.guild.icon:
+            current.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon.url}')
+        else:
+            current.set_author(name=f'{ctx.guild}', icon_url=ctx.author.display_avatar.url)
+
         current.timestamp = datetime.datetime.utcnow()
         current.set_footer(text=f'Invoked by {ctx.author.name}.')
-        current.set_thumbnail(url=f'{self.bot.user.avatar_url}')
+        current.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
 
         for member in role.members:
             fields += 1
@@ -55,8 +61,13 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
                     colour = self.bot.utils_color
                 )
                 current.set_footer(text=f'Invoked by {ctx.author.name}.')
-                current.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon_url}')
-                current.set_thumbnail(url=f'{self.bot.user.avatar_url}')
+
+                if ctx.guild.icon:
+                    current.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon.url}')
+                else:
+                    current.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.author.display_avatar.url}')
+
+                current.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
                 current.timestamp = datetime.datetime.utcnow()
                 fields = 0
                 continue
@@ -69,8 +80,13 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
                 colour = self.bot.utils_color
             )
             embed.set_footer(text=f'Invoked by {ctx.author.name}.')
-            embed.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon_url}')
-            embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
+
+            if ctx.guild.icon:
+                embed.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon.url}')
+            else:
+                embed.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.author.display_avatar.url}')
+
+            embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
             embed.timestamp = datetime.datetime.utcnow()
 
             await ctx.reply(embed=embed)
@@ -79,8 +95,8 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         if not embeds:
             embeds.append(current)
 
-        paginator = BotEmbedPaginator(ctx, embeds)
-        await paginator.run()
+        paginator = PycordUtils.Pagination.AutoEmbedPaginator(ctx)
+        await paginator.run(embeds)
 
     @commands.command(aliases=['whois'], description='Get info about a user.')
     async def userinfo(self, ctx, member : commands.MemberConverter = None):
@@ -96,8 +112,8 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         )
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
-        embed.set_author(name=f'{member}', icon_url=f'{member.avatar_url}')
-        embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
+        embed.set_author(name=f'{member}', icon_url=f'{member.display_avatar.url}')
+        embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
         embed.add_field(name='User', value=f'{member.mention}', inline=False)
         embed.add_field(name='ID', value=f'{member.id}', inline=False)
         embed.add_field(name='Bot', value=f'{member.bot}', inline=False)
@@ -113,33 +129,48 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         embed.add_field(name='Joined At', value=f'{member.joined_at.strftime("%m/%d/%Y %H:%M:%S")}', inline=False)
         embed.add_field(name='Boosted', value=bool(member.premium_since), inline=False)
 
-        if member.activity and member.activity.name == 'Spotify':
-            await message.edit(embed=embed, components=[Button(label='More Info!', style=ButtonStyle.green, custom_id='SpotifyButton')])
-
-            interaction = await self.bot.wait_for("button_click", check=lambda i: i.component.label.startswith('More'))
-
-            embed = discord.Embed(
-                colour = member.activity.colour,
-                title = 'Activity Information',
-                description = "This task was completed without any errors."
-            )
-            embed.timestamp = datetime.datetime.utcnow()
-            embed.set_footer(text=f'Invoked by {ctx.author.name}')
-            embed.set_author(name=f'{member}', icon_url=f'{member.avatar_url}')
-            embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
-            embed.set_image(url=f'{member.activity.album_cover_url}')
-            embed.add_field(name='Activity', value=f'{member.activity.name}', inline=False)
-
-            for artist in member.activity.artists:
-                embed.add_field(name='Artist', value=f'{artist}', inline=False)
-
-            embed.add_field(name='Song', value=f'{member.activity.title}', inline=False)
-            embed.add_field(name='Album', value=f'{member.activity.album}', inline=False)
-
-            await interaction.respond(embed=embed)
-            return
+        for activity in member.activities:
+            if isinstance(activity, discord.Spotify):
+                await message.edit(embed=embed, view=SpotifyView(ctx, member))
+                return
 
         await message.edit(embed=embed)
+
+    @slash_command(description='Get info about a user.')
+    async def userinfo(self, ctx, member : commands.MemberConverter = None):
+        if member is None:
+            member = ctx.author
+
+        embed = discord.Embed(
+            colour = self.bot.utils_color,
+            title = 'User Information',
+            description = "This task was completed without any errors."
+        )
+        embed.timestamp = datetime.datetime.utcnow()
+        embed.set_footer(text=f'Invoked by {ctx.author.name}')
+        embed.set_author(name=f'{member}', icon_url=f'{member.display_avatar.url}')
+        embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
+        embed.add_field(name='User', value=f'{member.mention}', inline=False)
+        embed.add_field(name='ID', value=f'{member.id}', inline=False)
+        embed.add_field(name='Bot', value=f'{member.bot}', inline=False)
+        embed.add_field(name='Top Role', value=f'{member.top_role.mention}', inline=False)
+        embed.add_field(name='Status', value=f'{member.status}', inline=False)
+
+        try:
+            embed.add_field(name='Activity', value=f'{member.activity.name}', inline=False)
+        except:
+            embed.add_field(name='Activity', value='None', inline=False)
+
+        embed.add_field(name='Created At', value=f'{member.created_at.strftime("%m/%d/%Y %H:%M:%S")}', inline=False)
+        embed.add_field(name='Joined At', value=f'{member.joined_at.strftime("%m/%d/%Y %H:%M:%S")}', inline=False)
+        embed.add_field(name='Boosted', value=bool(member.premium_since), inline=False)
+
+        for activity in member.activities:
+            if isinstance(activity, discord.Spotify):
+                await message.edit(embed=embed, view=SpotifyView(ctx, member))
+                return
+
+        await ctx.send(embed=embed)
 
     @commands.command(description='Get info about a server.')
     async def serverinfo(self, ctx):
@@ -157,8 +188,13 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         )
         embed.timestamp = datetime.datetime.utcnow()
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
-        embed.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon_url}')
-        embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
+
+        if ctx.guild.icon:
+            embed.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon.url}')
+        else:
+            embed.set_author(name=f'{ctx.guild}', icon_url=None)
+
+        embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
         embed.add_field(name='Guild', value=f'{ctx.guild.name}', inline=False)
         embed.add_field(name='Region', value=f'{ctx.guild.region}', inline=False)
         embed.add_field(name='ID', value=f'{ctx.guild.id}', inline=False)
@@ -178,6 +214,46 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
 
         await message.edit(embed=embed)
 
+    @slash_command(description='Get info about a server.')
+    async def serverinfo(self, ctx):
+        statuses = [len(list(filter(lambda m: f'{m.status}' == "online", ctx.guild.members))),
+                    len(list(filter(lambda m: f'{m.status}' == "idle", ctx.guild.members))),
+                    len(list(filter(lambda m: f'{m.status}' == "dnd", ctx.guild.members))),
+                    len(list(filter(lambda m: f'{m.status}' == "offline", ctx.guild.members)))]
+
+        embed = discord.Embed(
+            colour = self.bot.utils_color,
+            title = 'Server Information',
+            description = "This task was completed without any errors."
+        )
+        embed.timestamp = datetime.datetime.utcnow()
+        embed.set_footer(text=f'Invoked by {ctx.author.name}')
+
+        if ctx.guild.icon:
+            embed.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon.url}')
+        else:
+            embed.set_author(name=f'{ctx.guild}')
+
+        embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
+        embed.add_field(name='Guild', value=f'{ctx.guild.name}', inline=False)
+        embed.add_field(name='Region', value=f'{ctx.guild.region}', inline=False)
+        embed.add_field(name='ID', value=f'{ctx.guild.id}', inline=False)
+        embed.add_field(name='Created At', value=f'{ctx.guild.created_at.strftime("%m/%d/%Y %H:%M:%S")}', inline=False)
+        embed.add_field(name='Members', value=len(ctx.guild.members), inline=False)
+        embed.add_field(name='Humans', value=len(list(filter(lambda m: not m.bot, ctx.guild.members))), inline=False)
+        embed.add_field(name='Bots', value=len(list(filter(lambda m: m.bot, ctx.guild.members))), inline=False)
+        embed.add_field(name='Ban Count', value=len(await ctx.guild.bans()), inline=False)
+        embed.add_field(name='Statuses', value=f"🟢 {statuses[0]} 🟠 {statuses[1]} 🔴 {statuses[2]} ⚪ {statuses[3]}", inline=False)
+        embed.add_field(name='Text Channels', value=len(ctx.guild.text_channels), inline=False)
+        embed.add_field(name='Voice Channels', value=len(ctx.guild.voice_channels), inline=False)
+        embed.add_field(name='Categories', value=len(ctx.guild.categories), inline=False)
+        embed.add_field(name='Roles', value=len(ctx.guild.roles), inline=False)
+        embed.add_field(name='Invites', value=len(await ctx.guild.invites()), inline=False)
+        embed.add_field(name='Boost Count', value=f'{ctx.guild.premium_subscription_count}', inline=False)
+        embed.add_field(name='Boost Tier', value=f'Level {ctx.guild.premium_tier}')
+
+        await ctx.send(embed=embed)
+
     @commands.command(description='Check the bots latency status.')
     async def ping(self, ctx):
         latency = round(self.bot.latency * 1000)
@@ -189,6 +265,18 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         )
 
         await ctx.reply(embed=embed)
+
+    @slash_command(description='Check the bots latency status.')
+    async def ping(self, ctx):
+        latency = round(self.bot.latency * 1000)
+
+        embed = discord.Embed(
+            colour = self.bot.utils_color,
+            title = 'Pong!',
+            description = f'{latency}ms'
+        )
+
+        await ctx.send(embed=embed)
 
     @commands.command(description='Send a guild message to members in a role.')
     @commands.has_permissions(mention_everyone=True)
@@ -208,8 +296,13 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         )
 
         embed.set_footer(text=f'Invoked by {ctx.author}, for {Role}')
-        embed.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon_url}')
-        embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
+
+        if ctx.guild.icon:
+            embed.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon.url}')
+        else:
+            embed.set_author(name=f'{ctx.guild}', icon_url=None)
+
+        embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
 
         for member in Role.members:
             total += 1
@@ -233,7 +326,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         embed.add_field(name='Sent Messages', value=f'{success}', inline=True)
         embed.add_field(name='Blocked Messages', value=f'{fail}', inline=True)
         embed.add_field(name='Duration', value=f'{time}s', inline=True)
-        embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
+        embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
         embed.set_footer(text=f'Invoked by {ctx.author}, for {Role}')
 
         await message.edit(embed=embed)
@@ -247,10 +340,24 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         )
         embed.timestamp = datetime.datetime.utcnow()
         embed.add_field(name='Thank you!', value=f"This bot is a project I made for myself and I'm glad you want to invite it to your server, it means the world. This bot has been improving at the same rate as my skillset. Each new skill I learn, I try and apply it to the bot. Once again. Thanks. Enjoy!", inline=True)
-        embed.set_thumbnail(url=f'{self.bot.user.avatar_url}')
+        embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
 
-        await ctx.send(embed=embed, components=[Button(label='Invite Me!', style=ButtonStyle.URL, url=self.bot.invite_link)])
+        await ctx.send(embed=embed, view=InviteView())
+
+    @slash_command(description='Invite the bot!')
+    async def invite(self, ctx):
+        embed = discord.Embed(
+            title = 'Link Generated.',
+            colour = self.bot.utils_color,
+            description = 'Before you invite the bot, please take a few moments to read the field below.'
+        )
+        embed.timestamp = datetime.datetime.utcnow()
+        embed.add_field(name='Thank you!', value=f"This bot is a project I made for myself and I'm glad you want to invite it to your server, it means the world. This bot has been improving at the same rate as my skillset. Each new skill I learn, I try and apply it to the bot. Once again. Thanks. Enjoy!", inline=True)
+        embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
+        embed.set_footer(text=f'Invoked by {ctx.author.name}')
+
+        await ctx.send(embed=embed, view=InviteView())
 
 def setup(bot):
     bot.add_cog(Utils(bot))
