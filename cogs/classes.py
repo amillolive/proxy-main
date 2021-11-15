@@ -2,20 +2,22 @@ import asyncio
 import asyncpraw
 from asyncpraw import Reddit
 import discord
-import disputils
 import json
 import random
 from discord.ext import commands, tasks
+from discord.commands import slash_command
 from itertools import cycle
 from discord.utils import get
 import typing
 import datetime
-from disputils import BotEmbedPaginator
 import os
 import traceback
 import sys
 import discordmongo
 import motor.motor_asyncio
+from discord import Spotify
+import PycordUtils
+from dotenv import load_dotenv
 
 if __name__ == '__main__':
     os.system('python main.py')
