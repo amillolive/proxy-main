@@ -18,6 +18,7 @@ import motor.motor_asyncio
 from discord import Spotify
 import PycordUtils
 from dotenv import load_dotenv
+from .views.views import InviteView, SpotifyView
 from .classes import MXRoleConverter
 from .classes import MXDurationConverter
 
