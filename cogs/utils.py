@@ -21,6 +21,7 @@ from dotenv import load_dotenv
 from .views.views import InviteView, SpotifyView
 from .classes import MXRoleConverter
 from .classes import MXDurationConverter
+import Paginator
 
 if __name__ == '__main__':
     os.system('python main.py')
@@ -95,8 +96,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         if not embeds:
             embeds.append(current)
 
-        paginator = PycordUtils.Pagination.AutoEmbedPaginator(ctx)
-        await paginator.run(embeds)
+        await Paginator.Simple().start(ctx, pages=embeds)
 
     @commands.command(aliases=['whois'], description='Get info about a user.')
     async def userinfo(self, ctx, member : commands.MemberConverter = None):
