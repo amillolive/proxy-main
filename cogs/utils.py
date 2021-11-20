@@ -254,6 +254,34 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
 
         await ctx.respond(embed=embed)
 
+    @commands.command(description='Get the avatar of a member.')
+    async def avatar(self, ctx, member : commands.MemberConverter = None):
+        if member is None:
+            member = ctx.author
+
+        embed = discord.Embed(
+            colour = self.bot.utils_color,
+            title = 'Avatar',
+        )
+        embed.set_image(url=f'{member.display_avatar.url}')
+        embed.set_author(name=f'{member}', icon_url=f'{member.display_avatar.url}')
+
+        await ctx.send(embed=embed)
+
+    @slash_command(name='avatar', description='Get the avatar of a member.')
+    async def _avatar(self, ctx, member : commands.MemberConverter = None):
+        if member is None:
+            member = ctx.author
+
+        embed = discord.Embed(
+            colour = self.bot.utils_color,
+            title = 'Avatar',
+        )
+        embed.set_image(url=f'{member.display_avatar.url}')
+        embed.set_author(name=f'{member}', icon_url=f'{member.display_avatar.url}')
+
+        await ctx.respond(embed=embed)
+
     @commands.command(description='Check the bots latency status.')
     async def ping(self, ctx):
         latency = round(self.bot.latency * 1000)

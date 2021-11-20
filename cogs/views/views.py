@@ -34,7 +34,7 @@ class SpotifyView(discord.ui.View):
         self.ctx = ctx
         self.member = member
 
-    @discord.ui.button(label='More Info!', style=discord.ButtonStyle.green)
+    @discord.ui.button(label='More Info!', style=discord.ButtonStyle.success)
     async def SpotifyButton(self, button: discord.ui.Button, interaction: discord.Interaction):
         try:
             embed = discord.Embed(
