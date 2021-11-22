@@ -33,9 +33,16 @@ class SpotifyView(discord.ui.View):
         super().__init__(timeout=timeout)
         self.ctx = ctx
         self.member = member
+        try:
+            self.add_item(discord.ui.Button(label="Spotify Link!", url=member.activities[1].track_url))
+        except:
+            self.add_item(discord.ui.Button(label="Spotify Link!", url=member.activity.track_url))
 
-    @discord.ui.button(label='More Info!', style=discord.ButtonStyle.success)
+    @discord.ui.button(label='More Info!', style=discord.ButtonStyle.primary)
     async def SpotifyButton(self, button: discord.ui.Button, interaction: discord.Interaction):
+        button.style = discord.ButtonStyle.secondary
+        button.disabled = True
+        await interaction.message.edit(view=self)
         try:
             embed = discord.Embed(
                 colour = self.member.activities[1].colour,
@@ -58,6 +65,8 @@ class SpotifyView(discord.ui.View):
             embed.add_field(name='Song', value=f'{self.member.activities[1].title}', inline=False)
             embed.add_field(name='Album', value=f'{self.member.activities[1].album}', inline=False)
 
+            button.style = discord.ButtonStyle.success
+            await interaction.message.edit(view=self)
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
 
@@ -83,5 +92,7 @@ class SpotifyView(discord.ui.View):
             embed.add_field(name='Song', value=f'{self.member.activity.title}', inline=False)
             embed.add_field(name='Album', value=f'{self.member.activity.album}', inline=False)
 
+            button.style = discord.ButtonStyle.success
+            await interaction.message.edit(view=self)
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
