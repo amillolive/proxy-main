@@ -467,7 +467,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         embed.set_thumbnail(url=f'{ctx.author.display_avatar.url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
 
-        await ctx.send(embed=embed)
+        await ctx.respond(embed=embed)
 
 def setup(bot):
     bot.add_cog(Utils(bot))
