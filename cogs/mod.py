@@ -62,7 +62,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
             description = 'This task was completed without any errors.',
             colour = self.bot.mod_color
         )
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = discord.utils.utcnow()
         embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.display_avatar.url}')
         embed.set_footer(text='Invoked by {ctx.author.name}')
 
@@ -96,7 +96,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
             description = 'This task was completed without any errors.',
             colour = self.bot.mod_color
         )
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = discord.utils.utcnow()
         embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.display_avatar.url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
 
@@ -129,7 +129,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
             description = 'This task was completed without any errors.',
             colour = self.bot.mod_color
         )
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = discord.utils.utcnow()
         embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.display_avatar.url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
 
@@ -157,7 +157,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
             description = 'This task was completed without any errors.',
             colour = self.bot.mod_color
         )
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = discord.utils.utcnow()
         embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.display_avatar.url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
 
@@ -179,7 +179,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
             description = 'This task was completed without any errors.',
             colour = self.bot.mod_color
         )
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = discord.utils.utcnow()
         embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.display_avatar.url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
 
@@ -204,7 +204,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
             description = 'This task was completed without any errors.',
             colour = self.bot.mod_color
         )
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = discord.utils.utcnow()
         embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.display_avatar.url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
 
@@ -228,7 +228,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
             description = 'This task was completed without any errors.',
             colour = self.bot.mod_color
         )
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = discord.utils.utcnow()
         embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.display_avatar.url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
 
@@ -263,7 +263,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         overwrites = {}
 
-        for role in ctx.guild.roles:
+        for role in channel.changed_roles:
             overwrites[role] = discord.PermissionOverwrite(
                 send_messages=False
             )
@@ -282,7 +282,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         overwrites = {}
 
-        for role in ctx.guild.roles:
+        for role in channel.changed_roles:
             overwrites[role] = discord.PermissionOverwrite(
                 send_messages=True
             )
@@ -358,8 +358,6 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
         else:
             await self.bot.log_channels.delete(data)
             await ctx.reply('Logging has been disabled. If you ever wish to re-enable it you can refer to the `set` subcommand in the help command.')
-
-
 
 def setup(bot):
     bot.add_cog(Mod(bot))

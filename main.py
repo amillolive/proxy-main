@@ -52,7 +52,7 @@ bot = commands.Bot(command_prefix = get_prefix, intents=intents, case_insensitiv
 load_dotenv(dotenv_path="./.env")
 
 bot.prefix = os.getenv('PREFIX')
-bot.version = '11.15.21'
+bot.version = '12.11.21'
 bot.help_command = ModifiedMinimalHelpCommand()
 bot.invite_link = os.getenv('INVITE_LINK')
 bot.bot_ids = [872558551573348392, 678863504991584256]

@@ -48,7 +48,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         else:
             current.set_author(name=f'{ctx.guild}', icon_url=ctx.author.display_avatar.url)
 
-        current.timestamp = datetime.datetime.utcnow()
+        current.timestamp = discord.utils.utcnow()
         current.set_footer(text=f'Invoked by {ctx.author.name}.')
         current.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
 
@@ -69,7 +69,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
                     current.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.author.display_avatar.url}')
 
                 current.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
-                current.timestamp = datetime.datetime.utcnow()
+                current.timestamp = discord.utils.utcnow()
                 fields = 0
                 continue
             current.add_field(name=f'{member.top_role}', value=f'`User` {member.mention} \n `Tag` {member}', inline=True)
@@ -88,7 +88,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
                 embed.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.author.display_avatar.url}')
 
             embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
-            embed.timestamp = datetime.datetime.utcnow()
+            embed.timestamp = discord.utils.utcnow()
 
             await ctx.reply(embed=embed)
             return
@@ -110,7 +110,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
             title = 'User Information',
             description = "This task was completed without any errors."
         )
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = discord.utils.utcnow()
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
         embed.set_author(name=f'{member}', icon_url=f'{member.display_avatar.url}')
         embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
@@ -146,7 +146,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
             title = 'User Information',
             description = "This task was completed without any errors."
         )
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = discord.utils.utcnow()
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
         embed.set_author(name=f'{member}', icon_url=f'{member.display_avatar.url}')
         embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
@@ -186,7 +186,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
             title = 'Server Information',
             description = "This task was completed without any errors."
         )
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = discord.utils.utcnow()
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
 
         if ctx.guild.icon:
@@ -226,7 +226,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
             title = 'Server Information',
             description = "This task was completed without any errors."
         )
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = discord.utils.utcnow()
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
 
         if ctx.guild.icon:
@@ -349,7 +349,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
             colour = self.bot.utils_color,
             description = 'This task was completed without any errors.'
         )
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = discord.utils.utcnow()
         embed.add_field(name='Total Messages', value=f'{total}', inline=True)
         embed.add_field(name='Sent Messages', value=f'{success}', inline=True)
         embed.add_field(name='Blocked Messages', value=f'{fail}', inline=True)
@@ -366,7 +366,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
             colour = self.bot.utils_color,
             description = 'Before you invite the bot, please take a few moments to read the field below.'
         )
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = discord.utils.utcnow()
         embed.add_field(name='Thank you!', value=f"This bot is a project I made for myself and I'm glad you want to invite it to your server, it means the world. This bot has been improving at the same rate as my skillset. Each new skill I learn, I try and apply it to the bot. Once again. Thanks. Enjoy!", inline=True)
         embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
@@ -380,7 +380,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
             colour = self.bot.utils_color,
             description = 'Before you invite the bot, please take a few moments to read the field below.'
         )
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = discord.utils.utcnow()
         embed.add_field(name='Thank you!', value=f"This bot is a project I made for myself and I'm glad you want to invite it to your server, it means the world. This bot has been improving at the same rate as my skillset. Each new skill I learn, I try and apply it to the bot. Once again. Thanks. Enjoy!", inline=True)
         embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')

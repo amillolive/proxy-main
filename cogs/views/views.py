@@ -49,7 +49,7 @@ class SpotifyView(discord.ui.View):
                 title = 'Activity Information',
                 description = "This task was completed without any errors."
             )
-            embed.timestamp = datetime.datetime.utcnow()
+            embed.timestamp = discord.utils.utcnow()
             embed.set_footer(text=f'Invoked by {self.ctx.author.name}')
             embed.set_author(name=f'{self.member}', icon_url=f'{self.member.display_avatar.url}')
             embed.set_thumbnail(url=f'{self.ctx.bot.user.display_avatar.url}')
@@ -76,7 +76,7 @@ class SpotifyView(discord.ui.View):
                 title = 'Activity Information',
                 description = "This task was completed without any errors."
             )
-            embed.timestamp = datetime.datetime.utcnow()
+            embed.timestamp = discord.utils.utcnow()
             embed.set_footer(text=f'Invoked by {self.ctx.author.name}')
             embed.set_author(name=f'{self.member}', icon_url=f'{self.member.display_avatar.url}')
             embed.set_thumbnail(url=f'{self.ctx.bot.user.display_avatar.url}')

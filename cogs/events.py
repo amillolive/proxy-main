@@ -49,7 +49,7 @@ class Events(commands.Cog, description='Events. These are all the events that ha
             description = 'This task was completed without any errors.',
             colour = self.bot.logging_color
         )
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = discord.utils.utcnow()
         embed.set_author(name=f'{message.author}', icon_url=f'{message.author.display_avatar.url}')
         embed.set_footer(text='Event logging.')
 
@@ -76,6 +76,7 @@ class Events(commands.Cog, description='Events. These are all the events that ha
         print(f'Version: {self.bot.version}')
         print('------')
 
+
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         embed = discord.Embed(
@@ -83,11 +84,11 @@ class Events(commands.Cog, description='Events. These are all the events that ha
             description = 'This task has come accross an error.',
             colour = self.bot.error_color
         )
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = discord.utils.utcnow()
         embed.set_author(name=f'{ctx.author}', icon_url=f'{ctx.author.display_avatar.url}')
         embed.set_footer(text='Error Log.')
         embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
-        embed.add_field(name='Error', value=f'{error}', inline=False)
+        embed.add_field(name='Error', value=f'`{error}`', inline=False)
         await ctx.reply(embed=embed)
         raise error
 
@@ -110,7 +111,7 @@ class Events(commands.Cog, description='Events. These are all the events that ha
             description = 'This task was completed without any errors.',
             colour = self.bot.logging_color
         )
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = discord.utils.utcnow()
         embed.set_author(name=f'{before.author}', icon_url=f'{before.author.display_avatar.url}')
         embed.set_footer(text='Event logging.')
 
@@ -138,7 +139,7 @@ class Events(commands.Cog, description='Events. These are all the events that ha
             description = 'This task was completed without any errors.',
             colour = self.bot.logging_color
         )
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = discord.utils.utcnow()
         embed.set_author(name=f'{role}', icon_url=f'{self.bot.user.display_avatar.url}')
         embed.set_footer(text='Event logging.')
 
@@ -165,7 +166,7 @@ class Events(commands.Cog, description='Events. These are all the events that ha
             description = 'This task was completed without any errors.',
             colour = self.bot.logging_color
         )
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = discord.utils.utcnow()
         embed.set_author(name=f'{role}', icon_url=f'{self.bot.user.display_avatar.url}')
         embed.set_footer(text='Event logging.')
 
@@ -192,7 +193,7 @@ class Events(commands.Cog, description='Events. These are all the events that ha
             description = 'This task was completed without any errors.',
             colour = self.bot.logging_color
         )
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = discord.utils.utcnow()
         embed.set_author(name=f'{after}', icon_url=f'{self.bot.user.display_avatar.url}')
         embed.set_footer(text='Event logging.')
 
@@ -220,7 +221,7 @@ class Events(commands.Cog, description='Events. These are all the events that ha
             description = 'This task was completed without any errors.',
             colour = self.bot.logging_color
         )
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = discord.utils.utcnow()
         embed.set_author(name=f'{user}', icon_url=f'{user.display_avatar.url}')
         embed.set_footer(text='Event logging.')
 
@@ -247,7 +248,7 @@ class Events(commands.Cog, description='Events. These are all the events that ha
             description = 'This task was completed without any errors.',
             colour = self.bot.logging_color
         )
-        embed.timestamp = datetime.datetime.utcnow()
+        embed.timestamp = discord.utils.utcnow()
         embed.set_author(name=f'{user}', icon_url=f'{user.display_avatar.url}')
         embed.set_footer(text='Event logging.')
 
