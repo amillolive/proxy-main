@@ -22,6 +22,8 @@ from .views.views import InviteView, SpotifyView
 from .classes import MXRoleConverter
 from .classes import MXDurationConverter
 import Paginator
+import json
+import requests
 
 if __name__ == '__main__':
     os.system('python main.py')
@@ -386,6 +388,86 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
 
         await ctx.respond(embed=embed, view=InviteView())
+
+    @commands.command(description='Get current weather info!')
+    async def weather(self, ctx, *, city):
+        url = f'http://api.openweathermap.org/data/2.5/weather?q={city}&appid={self.bot.ow_api_key}&units=imperial'
+        data = json.loads(requests.get(url).content)
+        try:
+            temp = data['main']['temp']
+            temp_min = data['main']['temp_min']
+            temp_max = data['main']['temp_max']
+            feels_like = data['main']['feels_like']
+            weather = data['weather'][0]['main']
+        except:
+            embed = discord.Embed(
+                title = 'Error Found',
+                description = 'This task has come accross an error.',
+                colour = self.bot.error_color
+            )
+            embed.timestamp = discord.utils.utcnow()
+            embed.set_author(name=f'{ctx.author}', icon_url=f'{ctx.author.display_avatar.url}')
+            embed.set_footer(text='Error Log.')
+            embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
+            embed.add_field(name='Error', value=f"`Command raised an exception: CustomError: 'Unable to find city {city}.'`", inline=False)
+            await ctx.reply(embed=embed)
+            return
+
+        embed = discord.Embed(
+            title = data['name'],
+            colour = self.bot.utils_color,
+            description = 'This task was completed without any errors.'
+        )
+        embed.timestamp = discord.utils.utcnow()
+        embed.add_field(name='Weather', value=f"{weather}", inline=True)
+        embed.add_field(name='Feels Like', value=f"{feels_like}", inline=True)
+        embed.add_field(name='Temperature', value=f"{temp}", inline=True)
+        embed.add_field(name='Temp Max', value=f"{temp_max}", inline=True)
+        embed.add_field(name='Temp Min', value=f"{temp_min}", inline=True)
+        embed.set_thumbnail(url=f'{ctx.author.display_avatar.url}')
+        embed.set_footer(text=f'Invoked by {ctx.author.name}')
+
+        await ctx.send(embed=embed)
+
+    @slash_command(name='weather', description='Get current weather info!')
+    async def _weather(self, ctx, *, city):
+        url = f'http://api.openweathermap.org/data/2.5/weather?q={city}&appid={self.bot.ow_api_key}&units=imperial'
+        data = json.loads(requests.get(url).content)
+        try:
+            temp = data['main']['temp']
+            temp_min = data['main']['temp_min']
+            temp_max = data['main']['temp_max']
+            feels_like = data['main']['feels_like']
+            weather = data['weather'][0]['main']
+        except:
+            embed = discord.Embed(
+                title = 'Error Found',
+                description = 'This task has come accross an error.',
+                colour = self.bot.error_color
+            )
+            embed.timestamp = discord.utils.utcnow()
+            embed.set_author(name=f'{ctx.author}', icon_url=f'{ctx.author.display_avatar.url}')
+            embed.set_footer(text='Error Log.')
+            embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
+            embed.add_field(name='Error', value=f"`Command raised an exception: CustomError: 'Unable to find city {city}.'`", inline=False)
+            await ctx.reply(embed=embed)
+            return
+
+        embed = discord.Embed(
+            title = data['name'],
+            colour = self.bot.utils_color,
+            description = 'This task was completed without any errors.'
+        )
+        embed.timestamp = discord.utils.utcnow()
+        embed.add_field(name='Weather', value=f"{weather}", inline=True)
+        embed.add_field(name='Feels Like', value=f"{feels_like}", inline=True)
+        embed.add_field(name='Temperature', value=f"{temp}", inline=True)
+        embed.add_field(name='Temp Max', value=f"{temp_max}", inline=True)
+        embed.add_field(name='Temp Min', value=f"{temp_min}", inline=True)
+        embed.set_thumbnail(url=f'{ctx.author.display_avatar.url}')
+        embed.set_footer(text=f'Invoked by {ctx.author.name}')
+
+        await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Utils(bot))
