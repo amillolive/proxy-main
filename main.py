@@ -56,6 +56,7 @@ bot.version = '12.11.21'
 bot.help_command = ModifiedMinimalHelpCommand()
 bot.invite_link = os.getenv('INVITE_LINK')
 bot.bot_ids = [872558551573348392, 678863504991584256]
+bot.ow_api_key = os.getenv('OW_API_KEY')
 
 MONGO_CONNECTION = os.getenv('MONGO_CONNECTION')
 
