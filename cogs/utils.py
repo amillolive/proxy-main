@@ -138,42 +138,6 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
 
         await message.edit(embed=embed)
 
-    @slash_command(name='userinfo', description='Get info about a user.')
-    async def _userinfo(self, ctx, member : commands.MemberConverter = None):
-        if member is None:
-            member = ctx.author
-
-        embed = discord.Embed(
-            colour = self.bot.utils_color,
-            title = 'User Information',
-            description = "This task was completed without any errors."
-        )
-        embed.timestamp = discord.utils.utcnow()
-        embed.set_footer(text=f'Invoked by {ctx.author.name}')
-        embed.set_author(name=f'{member}', icon_url=f'{member.display_avatar.url}')
-        embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
-        embed.add_field(name='User', value=f'{member.mention}', inline=False)
-        embed.add_field(name='ID', value=f'{member.id}', inline=False)
-        embed.add_field(name='Bot', value=f'{member.bot}', inline=False)
-        embed.add_field(name='Top Role', value=f'{member.top_role.mention}', inline=False)
-        embed.add_field(name='Status', value=f'{member.status}', inline=False)
-
-        try:
-            embed.add_field(name='Activity', value=f'{member.activity.name}', inline=False)
-        except:
-            embed.add_field(name='Activity', value='None', inline=False)
-
-        embed.add_field(name='Created At', value=f'{member.created_at.strftime("%m/%d/%Y %H:%M:%S")}', inline=False)
-        embed.add_field(name='Joined At', value=f'{member.joined_at.strftime("%m/%d/%Y %H:%M:%S")}', inline=False)
-        embed.add_field(name='Boosted', value=bool(member.premium_since), inline=False)
-
-        for activity in member.activities:
-            if isinstance(activity, discord.Spotify):
-                await message.edit(embed=embed, view=SpotifyView(ctx, member))
-                return
-
-        await ctx.respond(embed=embed)
-
     @commands.command(description='Get info about a server.')
     async def serverinfo(self, ctx):
         message = await ctx.reply('Working...')
@@ -218,6 +182,8 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
 
     @slash_command(name='serverinfo', description='Get info about a server.')
     async def _serverinfo(self, ctx):
+        await ctx.defer()
+
         statuses = [len(list(filter(lambda m: f'{m.status}' == "online", ctx.guild.members))),
                     len(list(filter(lambda m: f'{m.status}' == "idle", ctx.guild.members))),
                     len(list(filter(lambda m: f'{m.status}' == "dnd", ctx.guild.members))),
@@ -272,6 +238,8 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
 
     @slash_command(name='avatar', description='Get the avatar of a member.')
     async def _avatar(self, ctx, member : commands.MemberConverter = None):
+        await ctx.defer()
+
         if member is None:
             member = ctx.author
 
@@ -298,6 +266,8 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
 
     @slash_command(name='ping', description='Check the bots latency status.')
     async def _ping(self, ctx):
+        await ctx.defer()
+
         latency = round(self.bot.latency * 1000)
 
         embed = discord.Embed(
@@ -377,6 +347,8 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
 
     @slash_command(name='invite', description='Invite the bot!')
     async def _invite(self, ctx):
+        await ctx.defer()
+
         embed = discord.Embed(
             title = 'Link Generated.',
             colour = self.bot.utils_color,
@@ -391,8 +363,10 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
 
     @commands.command(description='Get current weather info!')
     async def weather(self, ctx, *, city):
+        await ctx.defer()
         url = f'http://api.openweathermap.org/data/2.5/weather?q={city}&appid={self.bot.ow_api_key}&units=imperial'
         data = json.loads(requests.get(url).content)
+
         try:
             temp = data['main']['temp']
             temp_min = data['main']['temp_min']
@@ -431,6 +405,8 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
 
     @slash_command(name='weather', description='Get current weather info!')
     async def _weather(self, ctx, *, city):
+        await ctx.defer()
+
         url = f'http://api.openweathermap.org/data/2.5/weather?q={city}&appid={self.bot.ow_api_key}&units=imperial'
         data = json.loads(requests.get(url).content)
         try:
@@ -450,7 +426,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
             embed.set_footer(text='Error Log.')
             embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
             embed.add_field(name='Error', value=f"`Command raised an exception: CustomError: 'Unable to find city {city}.'`", inline=False)
-            await ctx.reply(embed=embed)
+            await ctx.respond(embed=embed)
             return
 
         embed = discord.Embed(

@@ -53,6 +53,7 @@ class Reddit(commands.Cog, description='Public commands. Anyone can use these!')
     @slash_command(name='meme', description='Get a meme from reddit.')
     async def _meme(self, ctx):
         await ctx.defer()
+
         subreddit = await self.bot.reddit_task.subreddit("memes")
         submission = random.choice([submission async for submission in subreddit.hot(limit=50)])
 
@@ -92,6 +93,7 @@ class Reddit(commands.Cog, description='Public commands. Anyone can use these!')
     @slash_command(name='dog', description='Get a dog from reddit.')
     async def _dog(self, ctx):
         await ctx.defer()
+
         subreddit = await self.bot.reddit_task.subreddit("rarepuppers")
         submission = random.choice([submission async for submission in subreddit.hot(limit=50)])
 
@@ -131,6 +133,7 @@ class Reddit(commands.Cog, description='Public commands. Anyone can use these!')
     @slash_command(name='gamingsetup', description='Get a gaming setup from reddit.')
     async def _gamingsetup(self, ctx):
         await ctx.defer()
+
         subreddit = await self.bot.reddit_task.subreddit("battlestations")
         submission = random.choice([submission async for submission in subreddit.hot(limit=50)])
 
