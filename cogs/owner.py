@@ -38,5 +38,7 @@ class Owner(commands.Cog, description='Owner commands. Only the developer can us
             guild.leave
             await ctx.reply(f'Left guild {guild.name}.')
 
+
+
 def setup(bot):
     bot.add_cog(Owner(bot))

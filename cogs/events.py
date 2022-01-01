@@ -76,7 +76,6 @@ class Events(commands.Cog, description='Events. These are all the events that ha
         print(f'Version: {self.bot.version}')
         print('------')
 
-
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         embed = discord.Embed(

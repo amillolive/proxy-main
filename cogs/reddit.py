@@ -35,7 +35,7 @@ class Reddit(commands.Cog, description='Public commands. Anyone can use these!')
         message = await ctx.reply('Working...')
 
         subreddit = self.bot.reddit_task.subreddit("memes")
-        submission = subreddit.hot(limit=50).random()
+        submission = random.choice([submission for submission in subreddit.hot(limit=50)])
 
         embed = discord.Embed(
             colour = self.bot.api_color,
@@ -55,7 +55,7 @@ class Reddit(commands.Cog, description='Public commands. Anyone can use these!')
         await ctx.defer()
 
         subreddit = self.bot.reddit_task.subreddit("memes")
-        submission = subreddit.hot(limit=50).random()
+        submission = random.choice([submission for submission in subreddit.hot(limit=50)])
 
         embed = discord.Embed(
             colour = self.bot.api_color,
@@ -75,7 +75,7 @@ class Reddit(commands.Cog, description='Public commands. Anyone can use these!')
         message = await ctx.reply('Working...')
 
         subreddit = self.bot.reddit_task.subreddit("rarepuppers")
-        submission = subreddit.hot(limit=50).random()
+        submission = random.choice([submission for submission in subreddit.hot(limit=50)])
 
         embed = discord.Embed(
             colour = self.bot.api_color,
@@ -95,7 +95,7 @@ class Reddit(commands.Cog, description='Public commands. Anyone can use these!')
         await ctx.defer()
 
         subreddit = self.bot.reddit_task.subreddit("rarepuppers")
-        submission = subreddit.hot(limit=50).random()
+        submission = random.choice([submission for submission in subreddit.hot(limit=50)])
 
         embed = discord.Embed(
             colour = self.bot.api_color,
@@ -115,7 +115,7 @@ class Reddit(commands.Cog, description='Public commands. Anyone can use these!')
         message = await ctx.reply('Working...')
 
         subreddit = self.bot.reddit_task.subreddit("battlestations")
-        submission = subreddit.hot(limit=50).random()
+        submission = random.choice([submission for submission in subreddit.hot(limit=50)])
 
         embed = discord.Embed(
             colour = self.bot.api_color,
@@ -134,8 +134,8 @@ class Reddit(commands.Cog, description='Public commands. Anyone can use these!')
     async def _gamingsetup(self, ctx):
         await ctx.defer()
 
-        subreddit = self.bot.reddit_task.subreddit("battlestations")
-        submission = subreddit.hot(limit=50).random()
+        subreddit = await self.bot.reddit_task.subreddit("battlestations")
+        submission = random.choice([submission for submission in subreddit.hot(limit=50)])
 
         embed = discord.Embed(
             colour = self.bot.api_color,

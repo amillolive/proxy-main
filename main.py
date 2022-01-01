@@ -19,15 +19,6 @@ from discord import Spotify
 import PycordUtils
 from dotenv import load_dotenv
 
-# Help Command Subclass
-
-class ModifiedMinimalHelpCommand(commands.MinimalHelpCommand):
-    async def send_pages(self):
-        destination = self.get_destination()
-        for page in self.paginator.pages:
-            emby = discord.Embed(description=page, colour = bot.utils_color)
-            await destination.send(embed=emby)
-
 # Prefix Function
 
 async def get_prefix(bot, message):
