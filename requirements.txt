@@ -3,7 +3,7 @@ PyNaCl
 pandas
 async-timeout
 requests
-asyncpraw
+praw
 discordmongopy
 motor
 dnspython

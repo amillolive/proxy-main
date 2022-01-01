@@ -1,6 +1,6 @@
 import asyncio
-import asyncpraw
-from asyncpraw import Reddit
+import praw
+from praw import Reddit
 import discord
 import json
 import random
