@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import asyncio
-import praw
-from praw import Reddit
+import asyncpraw
+from asyncpraw import Reddit
 import discord
 import json
 import random

@@ -1,6 +1,6 @@
 import asyncio
-import praw
-from praw import Reddit
+import asyncpraw
+from asyncpraw import Reddit
 import discord
 import json
 import random
@@ -30,20 +30,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
         self.bot = bot
         print('Mod Active')
 
-    @commands.command(description='Set the muterole for the guild.')
-    @commands.has_permissions(manage_messages=True)
-    async def muterole(self, ctx, role : MXRoleConverter):
-        data = await self.bot.mute_roles.find(ctx.guild.id)
-
-        if not data or "role_id" not in data:
-            data = {"_id": ctx.guild.id, "role_id": role.id}
-
-        data["role_id"] = role.id
-        await self.bot.mute_roles.upsert(data)
-
-        await ctx.reply(f"The mute role has been changed to `{role}`. If you couldn't use the mute commands before, you should be able to now.")
-
-    @commands.command(description='Mute a member. Must have set the muterole.')
+    @commands.group(description='Mute a member. Must have set the muterole.', invoke_without_command=True)
     @commands.has_permissions(manage_messages=True)
     async def mute(self, ctx, member : commands.MemberConverter, *, reason=None):
         data = await self.bot.mute_roles.find(ctx.guild.id)
@@ -74,9 +61,22 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         await ctx.reply(embed=embed)
 
-    @commands.command(description='Temporarily mute a member. Must have set the muterole.')
+    @mute.command(description='Set the mute role for the guild.')
     @commands.has_permissions(manage_messages=True)
-    async def tempmute(self, ctx, member : commands.MemberConverter, duration : MXDurationConverter):
+    async def setrole(self, ctx, role : MXRoleConverter):
+        data = await self.bot.mute_roles.find(ctx.guild.id)
+
+        if not data or "role_id" not in data:
+            data = {"_id": ctx.guild.id, "role_id": role.id}
+
+        data["role_id"] = role.id
+        await self.bot.mute_roles.upsert(data)
+
+        await ctx.reply(f"The mute role has been changed to `{role}`. If you couldn't use the mute commands before, you should be able to now.")
+
+    @mute.command(description='Temporarily mute a member. Must have set the muterole.')
+    @commands.has_permissions(manage_messages=True)
+    async def temp(self, ctx, member : commands.MemberConverter, duration : MXDurationConverter):
         multiplier = {'s': 1, 'm': 60, 'h': 3600, 'd': 86400}
         amount, unit = duration
 
@@ -110,9 +110,9 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
         await asyncio.sleep(amount * multiplier[unit])
         await member.remove_roles(muted_role)
 
-    @commands.command(description='Unute a member. Must have set the muterole.')
+    @mute.command(description='Unmute a member. Must have set the muterole.')
     @commands.has_permissions(manage_messages=True)
-    async def unmute(self, ctx, member : commands.MemberConverter, *, reason=None):
+    async def undo(self, ctx, member : commands.MemberConverter, *, reason=None):
         data = await self.bot.mute_roles.find(ctx.guild.id)
 
         if not data or "role_id" not in data:
@@ -169,7 +169,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         await ctx.reply(embed=embed)
 
-    @commands.command(description='Ban a member from the server.')
+    @commands.group(description='Ban a member from the server.', invoke_without_command=True)
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member : commands.UserConverter, *, reason=None):
         await ctx.guild.ban(member, reason=reason)
@@ -191,9 +191,9 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         await ctx.reply(embed=embed)
 
-    @commands.command(description='Temporarily ban a member from the server.')
+    @ban.command(description='Temporarily ban a member from the server.')
     @commands.has_permissions(ban_members=True)
-    async def tempban(self, ctx, member : commands.UserConverter, duration : MXDurationConverter):
+    async def temp(self, ctx, member : commands.UserConverter, duration : MXDurationConverter):
 
         multiplier = {'s': 1, 'm': 60, 'h': 3600, 'd': 86400}
         amount, unit = duration
@@ -218,7 +218,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
         await asyncio.sleep(amount * multiplier[unit])
         await ctx.guild.unban(member)
 
-    @commands.command(description='Unban a member from the server.')
+    @ban.command(description='Unban a member from the server.')
     @commands.has_permissions(ban_members=True)
     async def unban(self, ctx, member : commands.UserConverter, reason=None):
         await ctx.guild.unban(member, reason=reason)

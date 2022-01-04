@@ -1,6 +1,6 @@
 import asyncio
-import praw
-from praw import Reddit
+import asyncpraw
+from asyncpraw import Reddit
 import discord
 import json
 import random
@@ -67,7 +67,7 @@ class Events(commands.Cog, description='Events. These are all the events that ha
         self.bot.presence_update.start(self.bot)
         print(f'Logged in as: {self.bot.user.name}')
         print('Succesful connection to MongoDB.')
-        self.bot.reddit_task = praw.Reddit(
+        self.bot.reddit_task = asyncpraw.Reddit(
             client_id="A0vipUqVfot8NA",
             client_secret="k1bklpQYMcZtHgFqBfnB_LwBHYE",
             user_agent="paradex"

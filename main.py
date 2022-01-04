@@ -1,6 +1,6 @@
 import asyncio
-import praw
-from praw import Reddit
+import asyncpraw
+from asyncpraw import Reddit
 import discord
 import json
 import random
@@ -18,6 +18,13 @@ import motor.motor_asyncio
 from discord import Spotify
 import PycordUtils
 from dotenv import load_dotenv
+
+class ModifiedMinimalHelpCommand(commands.MinimalHelpCommand):
+    async def send_pages(self):
+        destination = self.get_destination()
+        for page in self.paginator.pages:
+            emby = discord.Embed(description=page, colour = discord.Colour.og_blurple())
+            await destination.send(embed=emby)
 
 # Prefix Function
 
@@ -42,8 +49,9 @@ bot = commands.Bot(command_prefix = get_prefix, intents=intents, case_insensitiv
 
 load_dotenv(dotenv_path="./.env")
 
+bot.help_command = ModifiedMinimalHelpCommand()
 bot.prefix = os.getenv('PREFIX')
-bot.version = '12.11.21'
+bot.version = '1.4.22'
 bot.invite_link = os.getenv('INVITE_LINK')
 bot.bot_ids = [872558551573348392, 678863504991584256]
 bot.ow_api_key = os.getenv('OW_API_KEY')

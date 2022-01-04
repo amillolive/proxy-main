@@ -1,6 +1,6 @@
 import asyncio
-import praw
-from praw import Reddit
+import asyncpraw
+from asyncpraw import Reddit
 import discord
 import json
 import random
@@ -28,21 +28,9 @@ import requests
 if __name__ == '__main__':
     os.system('python main.py')
 
-class ModifiedMinimalHelpCommand(commands.MinimalHelpCommand):
-    async def send_pages(self):
-        destination = self.get_destination()
-        for page in self.paginator.pages:
-            emby = discord.Embed(description=page, colour = discord.Colour.og_blurple())
-            await destination.send(embed=emby)
-
 class Utils(commands.Cog, description='Utils commands. Used mainly for gathering and sending info.'):
     def __init__(self, bot):
         self.bot = bot
-
-        help_command = ModifiedMinimalHelpCommand()
-        help_command.cog = self
-        bot.help_command = help_command
-
         print('Utils Active')
 
     @commands.command(description='Get a list of members in a role.')
