@@ -74,9 +74,9 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         await ctx.reply(f"The mute role has been changed to `{role}`. If you couldn't use the mute commands before, you should be able to now.")
 
-    @mute.command(description='Temporarily mute a member. Must have set the muterole.')
+    @commands.command(description='Temporarily mute a member. Must have set the muterole.')
     @commands.has_permissions(manage_messages=True)
-    async def temp(self, ctx, member : commands.MemberConverter, duration : MXDurationConverter):
+    async def tempmute(self, ctx, member : commands.MemberConverter, duration : MXDurationConverter):
         multiplier = {'s': 1, 'm': 60, 'h': 3600, 'd': 86400}
         amount, unit = duration
 
@@ -191,9 +191,9 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         await ctx.reply(embed=embed)
 
-    @ban.command(description='Temporarily ban a member from the server.')
+    @commands.command(description='Temporarily ban a member from the server.')
     @commands.has_permissions(ban_members=True)
-    async def temp(self, ctx, member : commands.UserConverter, duration : MXDurationConverter):
+    async def tempban(self, ctx, member : commands.UserConverter, duration : MXDurationConverter):
 
         multiplier = {'s': 1, 'm': 60, 'h': 3600, 'd': 86400}
         amount, unit = duration
@@ -220,7 +220,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
     @ban.command(description='Unban a member from the server.')
     @commands.has_permissions(ban_members=True)
-    async def unban(self, ctx, member : commands.UserConverter, reason=None):
+    async def undo(self, ctx, member : commands.UserConverter, reason=None):
         await ctx.guild.unban(member, reason=reason)
 
         embed = discord.Embed(
