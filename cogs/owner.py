@@ -30,7 +30,7 @@ class Owner(commands.Cog, description='Owner commands. Only the developer can us
         self.bot = bot
         print('Owner Active')
 
-    @command.group(description='Leave a guild. Only the dev can use this.', invoke_without_command=True)
+    @commands.group(description='Leave a guild. Only the dev can use this.', invoke_without_command=True)
     @commands.is_owner()
     async def guild(self, ctx):
         pass
