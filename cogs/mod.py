@@ -21,6 +21,8 @@ from dotenv import load_dotenv
 from .views.views import InviteView, SpotifyView
 from .classes import MXRoleConverter
 from .classes import MXDurationConverter
+import json
+import requests
 
 if __name__ == '__main__':
     os.system('python main.py')
@@ -32,7 +34,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
     @commands.group(description='Mute a member. Must have set the muterole.', invoke_without_command=True)
     @commands.has_permissions(manage_messages=True)
-    async def mute(self, ctx, member : commands.MemberConverter, *, reason=None):
+    async def mute(self, ctx, member : discord.Member, *, reason=None):
         data = await self.bot.mute_roles.find(ctx.guild.id)
 
         if not data or "role_id" not in data:
@@ -74,9 +76,9 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         await ctx.reply(f"The mute role has been changed to `{role}`. If you couldn't use the mute commands before, you should be able to now.")
 
-    @commands.command(description='Temporarily mute a member. Must have set the muterole.')
+    @mute.command(description='Temporarily mute a member. Must have set the muterole.')
     @commands.has_permissions(manage_messages=True)
-    async def tempmute(self, ctx, member : commands.MemberConverter, duration : MXDurationConverter):
+    async def temp(self, ctx, member : discord.Member, duration : MXDurationConverter):
         multiplier = {'s': 1, 'm': 60, 'h': 3600, 'd': 86400}
         amount, unit = duration
 
@@ -110,9 +112,9 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
         await asyncio.sleep(amount * multiplier[unit])
         await member.remove_roles(muted_role)
 
-    @mute.command(description='Unmute a member. Must have set the muterole.')
+    @mute.command(name='undo', description='Unmute a member. Must have set the muterole.')
     @commands.has_permissions(manage_messages=True)
-    async def undo(self, ctx, member : commands.MemberConverter, *, reason=None):
+    async def _undo(self, ctx, member : discord.Member, *, reason=None):
         data = await self.bot.mute_roles.find(ctx.guild.id)
 
         if not data or "role_id" not in data:
@@ -149,7 +151,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
     @commands.command(description='Kick a member from the server.')
     @commands.has_permissions(kick_members=True)
-    async def kick(self, ctx, member : commands.MemberConverter, *, reason=None):
+    async def kick(self, ctx, member : discord.Member, *, reason=None):
         await ctx.guild.kick(member, reason=reason)
 
         embed = discord.Embed(
@@ -171,7 +173,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
     @commands.group(description='Ban a member from the server.', invoke_without_command=True)
     @commands.has_permissions(ban_members=True)
-    async def ban(self, ctx, member : commands.UserConverter, *, reason=None):
+    async def ban(self, ctx, member : discord.User, *, reason=None):
         await ctx.guild.ban(member, reason=reason)
 
         embed = discord.Embed(
@@ -191,9 +193,9 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         await ctx.reply(embed=embed)
 
-    @commands.command(description='Temporarily ban a member from the server.')
+    @ban.command(description='Temporarily ban a member from the server.')
     @commands.has_permissions(ban_members=True)
-    async def tempban(self, ctx, member : commands.UserConverter, duration : MXDurationConverter):
+    async def temp(self, ctx, member : discord.User, duration : MXDurationConverter):
 
         multiplier = {'s': 1, 'm': 60, 'h': 3600, 'd': 86400}
         amount, unit = duration
@@ -220,7 +222,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
     @ban.command(description='Unban a member from the server.')
     @commands.has_permissions(ban_members=True)
-    async def undo(self, ctx, member : commands.UserConverter, reason=None):
+    async def undo(self, ctx, member : discord.User, *, reason=None):
         await ctx.guild.unban(member, reason=reason)
 
         embed = discord.Embed(
@@ -258,6 +260,14 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
     async def lock(self, ctx, channel : commands.TextChannelConverter = None):
         message = await ctx.reply('Working...')
 
+        data = await self.bot.mute_roles.find(ctx.guild.id)
+
+        try:
+            muted_role_id = data["role_id"]
+            muted_role = ctx.guild.get_role(muted_role_id)
+        except:
+            muted_role = None
+
         if channel is None:
             channel = ctx.channel
 
@@ -277,15 +287,34 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
     async def unlock(self, ctx, channel : commands.TextChannelConverter = None):
         message = await ctx.reply('Working...')
 
+        data = await self.bot.mute_roles.find(ctx.guild.id)
+
+        try:
+            muted_role_id = data["role_id"]
+            muted_role = ctx.guild.get_role(muted_role_id)
+        except:
+            muted_role = None
+
         if channel is None:
             channel = ctx.channel
 
         overwrites = {}
 
-        for role in channel.changed_roles:
-            overwrites[role] = discord.PermissionOverwrite(
-                send_messages=True
-            )
+        if not muted_role:
+            for role in channel.changed_roles:
+                overwrites[role] = discord.PermissionOverwrite(
+                    send_messages=True
+                )
+        else:
+            for role in channel.changed_roles:
+                if role.id == muted_role.id:
+                    overwrites[role] = discord.PermissionOverwrite(
+                        send_messages=False
+                    )
+                else:
+                    overwrites[role] = discord.PermissionOverwrite(
+                        send_messages=True
+                    )
 
         await channel.edit(overwrites=overwrites, reason=f'Unlocked channel {channel.name}.')
 
@@ -293,7 +322,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
     @commands.group(description='Give a member a role./Take away a members role.', invoke_without_command=True)
     @commands.has_permissions(manage_roles=True)
-    async def role(self, ctx, member : commands.MemberConverter, *, role : MXRoleConverter):
+    async def role(self, ctx, member : discord.Member, *, role : MXRoleConverter):
         if role in member.roles:
             await member.remove_roles(role)
             await ctx.reply(f'Removed `{role.name}` from `{member.name}`.')
@@ -316,7 +345,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
     @role.command(name='in', description='Give members in a role another role.')
     @commands.has_permissions(manage_roles=True)
-    async def _in(self, ctx, role1 : commands.RoleConverter, role2 : commands.RoleConverter):
+    async def _in(self, ctx, target_role : commands.RoleConverter, role : commands.RoleConverter):
         msg = await ctx.reply('Working...  (This may take a while depending on the amount of members in the role.)')
 
         for member in role1.members:

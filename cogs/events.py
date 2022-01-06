@@ -56,7 +56,7 @@ class Events(commands.Cog, description='Events. These are all the events that ha
         if channel.guild.icon:
             embed.set_thumbnail(url=f'{channel.guild.icon.url}')
 
-        embed.add_field(name='User', value=f'{message.author.mention}', inline=True)
+        embed.add_field(name='User', value=f'{message.author}', inline=True)
         embed.add_field(name='Message', value=f'{message.content}', inline=True)
 
         await channel.send(embed=embed)
@@ -64,7 +64,6 @@ class Events(commands.Cog, description='Events. These are all the events that ha
     @commands.Cog.listener()
     async def on_ready(self):
         print('------')
-        self.bot.presence_update.start(self.bot)
         print(f'Logged in as: {self.bot.user.name}')
         print('Succesful connection to MongoDB.')
         self.bot.reddit_task = asyncpraw.Reddit(
@@ -87,7 +86,7 @@ class Events(commands.Cog, description='Events. These are all the events that ha
         embed.set_author(name=f'{ctx.author}', icon_url=f'{ctx.author.display_avatar.url}')
         embed.set_footer(text='Error Log.')
         embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
-        embed.add_field(name='Error', value=f'`{error}`', inline=False)
+        embed.add_field(name='Command Error', value=f'`{error}`', inline=False)
         await ctx.reply(embed=embed)
         raise error
 

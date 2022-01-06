@@ -21,7 +21,6 @@ from dotenv import load_dotenv
 from .views.views import InviteView, SpotifyView
 from .classes import MXRoleConverter
 from .classes import MXDurationConverter
-import Paginator
 import json
 import requests
 
@@ -98,10 +97,18 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         if not embeds:
             embeds.append(current)
 
-        await Paginator.Simple().start(ctx, pages=embeds)
+        paginator = PycordUtils.Pagination.CustomEmbedPaginator(ctx)
+
+        paginator.add_reaction('⇤', "first")
+        paginator.add_reaction('⇷', "back")
+        paginator.add_reaction('✕', "lock")
+        paginator.add_reaction('⇸', "next")
+        paginator.add_reaction('⇥', "last")
+
+        await paginator.run(embeds)
 
     @commands.command(aliases=['whois'], description='Get info about a user.')
-    async def userinfo(self, ctx, member : commands.MemberConverter = None):
+    async def userinfo(self, ctx, member : discord.Member = None):
         message = await ctx.reply('Working...')
 
         if member is None:
@@ -223,7 +230,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         await ctx.respond(embed=embed)
 
     @commands.command(description='Get the avatar of a member.')
-    async def avatar(self, ctx, member : commands.MemberConverter = None):
+    async def avatar(self, ctx, member : discord.Member = None):
         if member is None:
             member = ctx.author
 
@@ -237,7 +244,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         await ctx.send(embed=embed)
 
     @slash_command(name='avatar', description='Get the avatar of a member.')
-    async def _avatar(self, ctx, member : commands.MemberConverter = None):
+    async def _avatar(self, ctx, member : discord.Member = None):
         await ctx.defer()
 
         if member is None:

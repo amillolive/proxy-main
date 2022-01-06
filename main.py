@@ -18,6 +18,8 @@ import motor.motor_asyncio
 from discord import Spotify
 import PycordUtils
 from dotenv import load_dotenv
+import json
+import requests
 
 class ModifiedMinimalHelpCommand(commands.MinimalHelpCommand):
     async def send_pages(self):
@@ -51,7 +53,7 @@ load_dotenv(dotenv_path="./.env")
 
 bot.help_command = ModifiedMinimalHelpCommand()
 bot.prefix = os.getenv('PREFIX')
-bot.version = '1.4.22'
+bot.version = '1.6.22'
 bot.invite_link = os.getenv('INVITE_LINK')
 bot.bot_ids = [872558551573348392, 678863504991584256]
 bot.ow_api_key = os.getenv('OW_API_KEY')
@@ -74,11 +76,15 @@ bot.api_color = discord.Colour.orange()
 bot.error_color = discord.Colour.dark_orange()
 
 @tasks.loop(seconds=300.0)
-async def presence_update(bot):
+async def presence_update():
     guild_count = len(bot.guilds)
     await bot.change_presence(status=discord.Status.online, activity=discord.Game(f'{bot.prefix}help | Serving {guild_count} guilds.'))
 
-bot.presence_update = presence_update
+@presence_update.before_loop
+async def before_presence_update():
+    await bot.wait_until_ready()
+
+presence_update.start()
 
 for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
