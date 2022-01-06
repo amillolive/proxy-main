@@ -97,13 +97,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         if not embeds:
             embeds.append(current)
 
-        paginator = PycordUtils.Pagination.CustomEmbedPaginator(ctx)
-
-        paginator.add_reaction('⇤', "first")
-        paginator.add_reaction('⇷', "back")
-        paginator.add_reaction('✕', "lock")
-        paginator.add_reaction('⇸', "next")
-        paginator.add_reaction('⇥', "last")
+        paginator = PycordUtils.Pagination.AutoEmbedPaginator(ctx)
 
         await paginator.run(embeds)
 
