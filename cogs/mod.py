@@ -5,7 +5,7 @@ import discord
 import json
 import random
 from discord.ext import commands, tasks
-from discord.commands import slash_command
+from discord.commands import slash_command, Option, permissions
 from itertools import cycle
 from discord.utils import get
 import typing
@@ -34,7 +34,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
     @commands.group(description='Mute a member. Must have set the muterole.', invoke_without_command=True)
     @commands.has_permissions(manage_messages=True)
-    async def mute(self, ctx, member : discord.Member, *, reason=None):
+    async def mute(self, ctx, member : commands.MemberConverter, *, reason=None):
         data = await self.bot.mute_roles.find(ctx.guild.id)
 
         if not data or "role_id" not in data:
@@ -76,9 +76,9 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         await ctx.reply(f"The mute role has been changed to `{role}`. If you couldn't use the mute commands before, you should be able to now.")
 
-    @mute.command(description='Temporarily mute a member. Must have set the muterole.')
+    @mute.command(name='temp', description='Temporarily mute a member. Must have set the muterole.')
     @commands.has_permissions(manage_messages=True)
-    async def temp(self, ctx, member : discord.Member, duration : MXDurationConverter):
+    async def mute_temp(self, ctx, member : discord.Member, *, duration : MXDurationConverter):
         multiplier = {'s': 1, 'm': 60, 'h': 3600, 'd': 86400}
         amount, unit = duration
 
@@ -114,7 +114,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
     @mute.command(name='undo', description='Unmute a member. Must have set the muterole.')
     @commands.has_permissions(manage_messages=True)
-    async def _undo(self, ctx, member : discord.Member, *, reason=None):
+    async def mute_undo(self, ctx, member : discord.Member, *, reason=None):
         data = await self.bot.mute_roles.find(ctx.guild.id)
 
         if not data or "role_id" not in data:
@@ -193,9 +193,9 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
 
         await ctx.reply(embed=embed)
 
-    @ban.command(description='Temporarily ban a member from the server.')
+    @ban.command(name='temp', description='Temporarily ban a member from the server.')
     @commands.has_permissions(ban_members=True)
-    async def temp(self, ctx, member : discord.User, duration : MXDurationConverter):
+    async def ban_temp(self, ctx, member : discord.User, duration : MXDurationConverter):
 
         multiplier = {'s': 1, 'm': 60, 'h': 3600, 'd': 86400}
         amount, unit = duration
@@ -220,9 +220,9 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
         await asyncio.sleep(amount * multiplier[unit])
         await ctx.guild.unban(member)
 
-    @ban.command(description='Unban a member from the server.')
+    @ban.command(name='undo', description='Unban a member from the server.')
     @commands.has_permissions(ban_members=True)
-    async def undo(self, ctx, member : discord.User, *, reason=None):
+    async def ban_undo(self, ctx, member : discord.User, *, reason=None):
         await ctx.guild.unban(member, reason=reason)
 
         embed = discord.Embed(
@@ -348,9 +348,9 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
     async def _in(self, ctx, target_role : commands.RoleConverter, role : commands.RoleConverter):
         msg = await ctx.reply('Working...  (This may take a while depending on the amount of members in the role.)')
 
-        for member in role1.members:
+        for member in target_role.members:
             try:
-                await member.add_roles(role2)
+                await member.add_roles(role)
             except:
                 pass
 
@@ -387,6 +387,41 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
         else:
             await self.bot.log_channels.delete(data)
             await ctx.reply('Logging has been disabled. If you ever wish to re-enable it you can refer to the `set` subcommand in the help command.')
+
+    @slash_command(name='timeout', descritpion='Timeout a user for a set period of time.')
+    @commands.has_permissions(moderate_members=True)
+    async def _timeout(
+        self,
+        ctx,
+        member : Option(discord.Member, "Select a member to timeout.",  required=True),
+        duration : Option(str, "Choose a duration for the timeout.", choices=["1 Minute", "5 Minutes", "10 Minutes", "1 Hour", "1 Day", "1 Week"], required=True)
+    ):
+        await ctx.defer()
+
+        if duration == "1 Minute":
+            minutes = 1
+
+        elif duration == "5 Minutes":
+            minutes = 5
+
+        elif duration == "10 Minutes":
+            minutes = 10
+
+        elif duration == "1 Hour":
+            minutes = 60
+
+        elif duration == "1 Day":
+            minutes = 1440
+
+        else:
+            minutes = 10080
+
+        length = datetime.timedelta(minutes=minutes)
+
+        await member.timeout_for(length)
+
+        await ctx.respond(f'{member.mention} has been put on **timeout** for __{duration}__.')
+
 
 def setup(bot):
     bot.add_cog(Mod(bot))

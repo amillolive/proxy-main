@@ -5,7 +5,7 @@ import discord
 import json
 import random
 from discord.ext import commands, tasks
-from discord.commands import slash_command
+from discord.commands import slash_command, Option
 from itertools import cycle
 from discord.utils import get
 import typing
@@ -23,6 +23,7 @@ from .classes import MXRoleConverter
 from .classes import MXDurationConverter
 import json
 import requests
+import Paginator
 
 if __name__ == '__main__':
     os.system('python main.py')
@@ -75,31 +76,28 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
                 continue
             current.add_field(name=f'{member.top_role}', value=f'`User` {member.mention} \n `Tag` {member}', inline=True)
 
-        if not current.fields:
-            embed = discord.Embed(
-                title = 'No members found',
-                description = f'No members were found in {role}.',
-                colour = self.bot.utils_color
-            )
-            embed.set_footer(text=f'Invoked by {ctx.author.name}.')
-
-            if ctx.guild.icon:
-                embed.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon.url}')
-            else:
-                embed.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.author.display_avatar.url}')
-
-            embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
-            embed.timestamp = discord.utils.utcnow()
-
-            await ctx.reply(embed=embed)
-            return
-
         if not embeds:
+            if not current.fields:
+                embed = discord.Embed(
+                    title = 'No members found',
+                    description = f'No members were found in {role}.',
+                    colour = self.bot.utils_color
+                )
+                embed.set_footer(text=f'Invoked by {ctx.author.name}.')
+
+                if ctx.guild.icon:
+                    embed.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.guild.icon.url}')
+                else:
+                    embed.set_author(name=f'{ctx.guild}', icon_url=f'{ctx.author.display_avatar.url}')
+
+                embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
+                embed.timestamp = discord.utils.utcnow()
+
+                await ctx.reply(embed=embed)
+                return
             embeds.append(current)
 
-        paginator = PycordUtils.Pagination.AutoEmbedPaginator(ctx)
-
-        await paginator.run(embeds)
+        await Paginator.Simple().start(ctx, pages=embeds)
 
     @commands.command(aliases=['whois'], description='Get info about a user.')
     async def userinfo(self, ctx, member : discord.Member = None):
@@ -238,7 +236,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         await ctx.send(embed=embed)
 
     @slash_command(name='avatar', description='Get the avatar of a member.')
-    async def _avatar(self, ctx, member : discord.Member = None):
+    async def _avatar(self, ctx, member : Option(discord.Member, "Select a member for an avatar (optional)", requried=False, default=None)):
         await ctx.defer()
 
         if member is None:
@@ -405,7 +403,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         await ctx.send(embed=embed)
 
     @slash_command(name='weather', description='Get current weather info!')
-    async def _weather(self, ctx, *, city):
+    async def _weather(self, ctx, *, city : Option(str, "Choose a city.", required=True)):
         await ctx.defer()
 
         url = f'http://api.openweathermap.org/data/2.5/weather?q={city}&appid={self.bot.ow_api_key}&units=imperial'

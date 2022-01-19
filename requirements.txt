@@ -9,4 +9,3 @@ motor
 dnspython
 python-dotenv
 PycordUtils
-discord.py-pagination
