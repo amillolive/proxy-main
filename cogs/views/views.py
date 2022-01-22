@@ -1,4 +1,3 @@
-from dotenv import load_dotenv
 import asyncio
 import asyncpraw
 from asyncpraw import Reddit
@@ -18,6 +17,9 @@ import discordmongo
 import motor.motor_asyncio
 from discord import Spotify
 import PycordUtils
+from dotenv import load_dotenv
+import json
+import requests
 
 class InviteView(discord.ui.View):
     def __init__(self):
@@ -96,3 +98,13 @@ class SpotifyView(discord.ui.View):
             await interaction.message.edit(view=self)
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
+
+class GitHubView(discord.ui.View):
+    def __init__(self):
+        super().__init__()
+
+        join_link = 'https://github.com/signup'
+        repo_link = 'https://github.com/mxze16/proxy-main/issues'
+
+        self.add_item(discord.ui.Button(label="Create Account", url=join_link))
+        self.add_item(discord.ui.Button(label="Report Bug", url=repo_link))
