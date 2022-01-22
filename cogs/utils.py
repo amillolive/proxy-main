@@ -18,7 +18,7 @@ import motor.motor_asyncio
 from discord import Spotify
 import PycordUtils
 from dotenv import load_dotenv
-from .views.views import InviteView, SpotifyView
+from .views.views import InviteView, SpotifyView, GitHubView
 from .classes import MXRoleConverter
 from .classes import MXDurationConverter
 import json
@@ -338,7 +338,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
             description = 'Before you invite the bot, please take a few moments to read the field below.'
         )
         embed.timestamp = discord.utils.utcnow()
-        embed.add_field(name='Thank you!', value=f"This bot is a project I made for myself and I'm glad you want to invite it to your server, it means the world. This bot has been improving at the same rate as my skillset. Each new skill I learn, I try and apply it to the bot. Once again. Thanks. Enjoy!", inline=True)
+        embed.add_field(name='Thank you!', value="This bot is a project I made for myself and I'm glad you want to invite it to your server, it means the world. This bot has been improving at the same rate as my skillset. Each new skill I learn, I try and apply it to the bot. Once again. Thanks. Enjoy!", inline=True)
         embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
 
@@ -443,6 +443,36 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
 
         await ctx.respond(embed=embed)
+
+    @commands.command(description='Report a bug.')
+    async def bugreport(self, ctx):
+        embed = discord.Embed(
+            title = 'Bug Report Information',
+            colour = self.bot.utils_color,
+            description = 'Follow the instructions below to report a bug.'
+        )
+        embed.timestamp = discord.utils.utcnow()
+        embed.add_field(name='Step 1', value=f"`Make sure you have a GitHub account. This is key to bringing a bug to my attention. (first button)`", inline=True)
+        embed.add_field(name='Step 2', value=f"`Head to the issues tab on the GitHub repository, and select new issue. Make sure you clearly describe what went wrong, there should be instructions. (second button)`", inline=True)
+        embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
+        embed.set_footer(text=f'Invoked by {ctx.author.name}')
+
+        await ctx.send(embed=embed, view=GitHubView())
+    
+    @slash_command(name='bugreport', description='Report a bug.')
+    async def _bugreport(self, ctx):
+        embed = discord.Embed(
+            title = 'Bug Report Information',
+            colour = self.bot.utils_color,
+            description = 'Follow the instructions below to report a bug.'
+        )
+        embed.timestamp = discord.utils.utcnow()
+        embed.add_field(name='Step 1', value=f"`Make sure you have a GitHub account. This is key to bringing a bug to my attention. (first button)`", inline=True)
+        embed.add_field(name='Step 2', value=f"`Head to the issues tab on the GitHub repository, and select new issue. Make sure you clearly describe what went wrong, there should be instructions. (second button)`", inline=True)
+        embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
+        embed.set_footer(text=f'Invoked by {ctx.author.name}')
+
+        await ctx.respond(embed=embed, view=GitHubView())
 
 def setup(bot):
     bot.add_cog(Utils(bot))
