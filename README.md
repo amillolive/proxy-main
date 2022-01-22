@@ -6,8 +6,7 @@ The code on this GitHub is not to be copied, it is only there for reference purp
 ----
 
 (Credits)
-Library: pycord - https://github.com/Pycord-Development/pycord
-VPS: linode (might change) - https://www.linode.com/
+Library: pycord - https://github.com/Pycord-Development/pycord, VPS: linode (might change) - https://www.linode.com/
 
 (Developer Information)
 Discord: vvax#3798 - Server N/A
