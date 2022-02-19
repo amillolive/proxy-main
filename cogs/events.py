@@ -61,6 +61,8 @@ class Events(commands.Cog, description='Events. These are all the events that ha
 
         await channel.send(embed=embed)
 
+        self.bot.sniped_messages[message.channel.id] = (message.content, message.author, message.channel, message.created_at)
+
     @commands.Cog.listener()
     async def on_ready(self):
         print('------')
@@ -256,7 +258,7 @@ class Events(commands.Cog, description='Events. These are all the events that ha
         embed.add_field(name='User', value=f'{user.mention}', inline=True)
         embed.add_field(name='ID', value=f'{user.id}', inline=True)
 
-        await channel.send(embed=embed)
-
+        await channel.send(embed=embed)            
+    
 def setup(bot):
     bot.add_cog(Events(bot))

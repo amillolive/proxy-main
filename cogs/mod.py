@@ -388,7 +388,7 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
             await self.bot.log_channels.delete(data)
             await ctx.reply('Logging has been disabled. If you ever wish to re-enable it you can refer to the `set` subcommand in the help command.')
 
-    @slash_command(name='timeout', descritpion='Timeout a user for a set period of time.')
+    @slash_command(name='timeout', description='Timeout a user for a set period of time.')
     @commands.has_permissions(moderate_members=True)
     async def _timeout(
         self,
@@ -421,6 +421,39 @@ class Mod(commands.Cog, description='Moderation commands. Only mods can use thes
         await member.timeout_for(length)
 
         await ctx.respond(f'{member.mention} has been put on **timeout** for __{duration}__.')
+
+    @commands.command(description='Timeout a user for a set period of time.')
+    @commands.has_permissions(moderate_members=True)
+    async def timeout(
+        self,
+        ctx,
+        member : discord.Member,
+        duration : str
+    ):
+
+        if duration == "1 Minute":
+            minutes = 1
+
+        elif duration == "5 Minutes":
+            minutes = 5
+
+        elif duration == "10 Minutes":
+            minutes = 10
+
+        elif duration == "1 Hour":
+            minutes = 60
+
+        elif duration == "1 Day":
+            minutes = 1440
+
+        else:
+            minutes = 10080
+
+        length = datetime.timedelta(minutes=minutes)
+
+        await member.timeout_for(length)
+
+        await ctx.send(f'{member.mention} has been put on **timeout** for __{duration}__.')
 
 
 def setup(bot):

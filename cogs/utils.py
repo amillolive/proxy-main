@@ -424,7 +424,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
             embed.set_author(name=f'{ctx.author}', icon_url=f'{ctx.author.display_avatar.url}')
             embed.set_footer(text='Error Log.')
             embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
-            embed.add_field(name='Error', value=f"`Command raised an exception: CustomError: 'Unable to find city {city}.'`", inline=False)
+            embed.add_field(name='Error', value=f"`Command raised an exception: CommandError: 'Unable to find city {city}.'`", inline=False)
             await ctx.respond(embed=embed)
             return
 
@@ -473,6 +473,21 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         embed.set_footer(text=f'Invoked by {ctx.author.name}')
 
         await ctx.respond(embed=embed, view=GitHubView())
+    
+    @commands.command(description='Snipe the most recent message in the channel.')
+    async def snipe(self, ctx):
+        m_content, m_author, m_channel, m_sent = self.bot.sniped_messages[ctx.channel.id]
+
+        embed = discord.Embed(
+            title=f"Message Sniped",
+            description=f'{m_content}',
+            color=self.bot.utils_color,
+            timestamp=m_sent
+        )
+        embed.set_author(name=f"{m_author}", icon_url=m_author.display_avatar.url)
+        embed.set_footer(text=f'Invoked by: {ctx.author} - Message author: {m_author} - Message channel: {m_channel}')
+
+        await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Utils(bot))
