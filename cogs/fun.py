@@ -5,7 +5,7 @@ import discord
 import json
 import random
 from discord.ext import commands, tasks
-from discord.commands import slash_command
+from discord.commands import slash_command, Option
 from itertools import cycle
 from discord.utils import get
 import typing
@@ -33,6 +33,11 @@ class Fun(commands.Cog, description='Public commands. Anyone can use these!'):
     @commands.command(description='Have the bot repeat what you say.')
     async def echo(self, ctx, *, message : commands.clean_content):
         await ctx.reply(message)
+    
+    @slash_command(description='Have the bot repeat what you say.')
+    async def echo(self, ctx, *, message : Option(str, 'The message for the bot to repeat.', required=True)):
+        await ctx.defer()
+        await ctx.respond(message)
 
     @commands.command(description='Flip a coin.')
     async def coinflip(self, ctx):

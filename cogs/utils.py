@@ -137,6 +137,44 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
 
         await message.edit(embed=embed)
 
+    @slash_command(name='userinfo', description='Get info about a user.')
+    async def _userinfo(self, ctx, member : discord.Member = None):
+        await ctx.defer()
+
+        if member is None:
+            member = ctx.author
+
+        embed = discord.Embed(
+            colour = self.bot.utils_color,
+            title = 'User Information',
+            description = "This task was completed without any errors."
+        )
+        embed.timestamp = discord.utils.utcnow()
+        embed.set_footer(text=f'Invoked by {ctx.author.name}')
+        embed.set_author(name=f'{member}', icon_url=f'{member.display_avatar.url}')
+        embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
+        embed.add_field(name='User', value=f'{member.mention}', inline=False)
+        embed.add_field(name='ID', value=f'{member.id}', inline=False)
+        embed.add_field(name='Bot', value=f'{member.bot}', inline=False)
+        embed.add_field(name='Top Role', value=f'{member.top_role.mention}', inline=False)
+        embed.add_field(name='Status', value=f'{member.status}', inline=False)
+
+        try:
+            embed.add_field(name='Activity', value=f'{member.activity.name}', inline=False)
+        except:
+            embed.add_field(name='Activity', value='None', inline=False)
+
+        embed.add_field(name='Created At', value=f'{member.created_at.strftime("%m/%d/%Y %H:%M:%S")}', inline=False)
+        embed.add_field(name='Joined At', value=f'{member.joined_at.strftime("%m/%d/%Y %H:%M:%S")}', inline=False)
+        embed.add_field(name='Boosted', value=bool(member.premium_since), inline=False)
+
+        for activity in member.activities:
+            if isinstance(activity, discord.Spotify):
+                await message.edit(embed=embed, view=SpotifyView(ctx, member))
+                return
+
+        await ctx.respond(embed=embed)
+
     @commands.command(description='Get info about a server.')
     async def serverinfo(self, ctx):
         message = await ctx.reply('Working...')
@@ -362,7 +400,6 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
 
     @commands.command(description='Get current weather info!')
     async def weather(self, ctx, *, city):
-        await ctx.defer()
         url = f'http://api.openweathermap.org/data/2.5/weather?q={city}&appid={self.bot.ow_api_key}&units=imperial'
         data = json.loads(requests.get(url).content)
 
@@ -474,7 +511,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
 
         await ctx.respond(embed=embed, view=GitHubView())
     
-    @commands.command(description='Snipe the most recent message in the channel.')
+    @commands.command(description='Snipe the most recent deleted message in the channel.')
     async def snipe(self, ctx):
         m_content, m_author, m_channel, m_sent = self.bot.sniped_messages[ctx.channel.id]
 
@@ -488,6 +525,22 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
         embed.set_footer(text=f'Invoked by: {ctx.author} - Message author: {m_author} - Message channel: {m_channel}')
 
         await ctx.send(embed=embed)
+    
+    @slash_command(name='snipe', description='Snipe the most recent deleted message in the channel.')
+    async def _snipe(self, ctx):
+        await ctx.defer()
+        m_content, m_author, m_channel, m_sent = self.bot.sniped_messages[ctx.channel.id]
 
+        embed = discord.Embed(
+            title=f"Message Sniped",
+            description=f'{m_content}',
+            color=self.bot.utils_color,
+            timestamp=m_sent
+        )
+        embed.set_author(name=f"{m_author}", icon_url=m_author.display_avatar.url)
+        embed.set_footer(text=f'Invoked by: {ctx.author} - Message author: {m_author} - Message channel: {m_channel}')
+
+        await ctx.respond(embed=embed)
+    
 def setup(bot):
     bot.add_cog(Utils(bot))

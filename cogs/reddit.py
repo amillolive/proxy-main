@@ -149,6 +149,46 @@ class Reddit(commands.Cog, description='Public commands. Anyone can use these!')
         embed.add_field(name='Author', value=f'{submission.author}', inline=False)
 
         await ctx.respond(embed=embed)
+    
+    @commands.command(description='Get a gaming setup from reddit.')
+    async def jdm(self, ctx):
+        message = await ctx.reply('Working...')
+
+        subreddit = await self.bot.reddit_task.subreddit("jdm")
+        submission = random.choice([submission async for submission in subreddit.hot(limit=50)])
+
+        embed = discord.Embed(
+            colour = self.bot.api_color,
+            title = f'{submission.title}',
+            description = f"r/{submission.subreddit}"
+        )
+        embed.timestamp = discord.utils.utcnow()
+        embed.set_footer(text=f'Invoked by {ctx.author.name} - 👍 {submission.score} - 💬 {submission.num_comments}')
+        embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.display_avatar.url}')
+        embed.set_image(url=f'{submission.url}')
+        embed.add_field(name='Author', value=f'{submission.author}', inline=False)
+
+        await message.edit(embed=embed)
+    
+    @slash_command(name='jdm', description='Get a gaming setup from reddit.')
+    async def _jdm(self, ctx):
+        await ctx.defer()
+
+        subreddit = await self.bot.reddit_task.subreddit("jdm")
+        submission = random.choice([submission async for submission in subreddit.hot(limit=50)])
+
+        embed = discord.Embed(
+            colour = self.bot.api_color,
+            title = f'{submission.title}',
+            description = f"r/{submission.subreddit}"
+        )
+        embed.timestamp = discord.utils.utcnow()
+        embed.set_footer(text=f'Invoked by {ctx.author.name} - 👍 {submission.score} - 💬 {submission.num_comments}')
+        embed.set_author(name=f'{ctx.author.name}', icon_url=f'{ctx.author.display_avatar.url}')
+        embed.set_image(url=f'{submission.url}')
+        embed.add_field(name='Author', value=f'{submission.author}', inline=False)
+
+        await ctx.respond(embed=embed)
 
 def setup(bot):
     bot.add_cog(Reddit(bot))
