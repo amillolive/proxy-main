@@ -419,7 +419,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
             embed.set_author(name=f'{ctx.author}', icon_url=f'{ctx.author.display_avatar.url}')
             embed.set_footer(text='Error Log.')
             embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
-            embed.add_field(name='Error', value=f"`Command raised an exception: CustomError: 'Unable to find city {city}.'`", inline=False)
+            embed.add_field(name='Command Error', value=f'`Unable to find city "{city}"`', inline=False)
             await ctx.reply(embed=embed)
             return
 
@@ -461,7 +461,7 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
             embed.set_author(name=f'{ctx.author}', icon_url=f'{ctx.author.display_avatar.url}')
             embed.set_footer(text='Error Log.')
             embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
-            embed.add_field(name='Error', value=f"`Command raised an exception: CommandError: 'Unable to find city {city}.'`", inline=False)
+            embed.add_field(name='Command Error', value=f'`Unable to find city "{city}"`', inline=False)
             await ctx.respond(embed=embed)
             return
 
@@ -513,7 +513,21 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
     
     @commands.command(description='Snipe the most recent deleted message in the channel.')
     async def snipe(self, ctx):
-        m_content, m_author, m_channel, m_sent = self.bot.sniped_messages[ctx.channel.id]
+        try: 
+            m_content, m_author, m_channel, m_sent = self.bot.sniped_messages[ctx.channel.id]
+        except:
+            embed = discord.Embed(
+                title = 'Error Found',
+                description = 'This task has come accross an error.',
+                colour = self.bot.error_color
+            )
+            embed.timestamp = discord.utils.utcnow()
+            embed.set_author(name=f'{ctx.author}', icon_url=f'{ctx.author.display_avatar.url}')
+            embed.set_footer(text='Error Log.')
+            embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
+            embed.add_field(name='Command Error', value=f"`Unable to snipe message (Does it exist?)`", inline=False)
+            await ctx.send(embed=embed)
+            return
 
         embed = discord.Embed(
             title=f"Message Sniped",
@@ -529,7 +543,22 @@ class Utils(commands.Cog, description='Utils commands. Used mainly for gathering
     @slash_command(name='snipe', description='Snipe the most recent deleted message in the channel.')
     async def _snipe(self, ctx):
         await ctx.defer()
-        m_content, m_author, m_channel, m_sent = self.bot.sniped_messages[ctx.channel.id]
+
+        try: 
+            m_content, m_author, m_channel, m_sent = self.bot.sniped_messages[ctx.channel.id]
+        except:
+            embed = discord.Embed(
+                title = 'Error Found',
+                description = 'This task has come accross an error.',
+                colour = self.bot.error_color
+            )
+            embed.timestamp = discord.utils.utcnow()
+            embed.set_author(name=f'{ctx.author}', icon_url=f'{ctx.author.display_avatar.url}')
+            embed.set_footer(text='Error Log.')
+            embed.set_thumbnail(url=f'{self.bot.user.display_avatar.url}')
+            embed.add_field(name='Command Error', value=f"`Unable to snipe message (Does it exist?)`", inline=False)
+            await ctx.respond(embed=embed)
+            return
 
         embed = discord.Embed(
             title=f"Message Sniped",
